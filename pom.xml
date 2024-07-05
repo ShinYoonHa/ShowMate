@@ -8,11 +8,11 @@
 		<version>3.2.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.shop</groupId>
-	<artifactId>shop</artifactId>
+	<groupId>com.culture</groupId>
+	<artifactId>culture</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>shop</name>
-	<description>Shop Project Spring Boot</description>
+	<name>culture</name>
+	<description>Showing a List of Performance, Creating a Group WebSite</description>
 	<properties>
 		<java.version>22</java.version>
 	</properties>
@@ -103,11 +103,14 @@
 			<version>3.2.0</version>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
 
