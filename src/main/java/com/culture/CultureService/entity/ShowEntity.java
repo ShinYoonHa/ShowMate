@@ -30,7 +30,10 @@ public class ShowEntity {
     private String producer; //제작사 (기획제작자)
     private String ticketPrice; //티켓 가격
     private String posterUrl; //포스터 이미지 경로 http://www...
+
+    @Column(length = 1000)
     private String summary; //줄거리
+
     private String area; //지역 ex.서울 특별시
     private String genre; //장르
     private String child; //아동 유무
