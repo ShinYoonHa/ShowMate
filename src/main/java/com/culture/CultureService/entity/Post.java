@@ -10,10 +10,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "post")
+@Table(name = "posts")
 public class Post {
     @Id
-    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
