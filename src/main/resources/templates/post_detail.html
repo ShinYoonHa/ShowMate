@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+  <title>Post Detail</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div layout:fragment="content">
+  <h1 th:text="${post.title}">Post Title</h1>
+  <p><strong>Author:</strong> <span th:text="${post.author}">Author Name</span></p>
+  <p><strong>Date:</strong> <span th:text="${post.postDate}">Post Date</span></p>
+  <p><strong>regTime:</strong> <span th:text="${post.regTime}">regTime</span></p>
+  <div>
+    <p th:text="${post.content}">Post Content</p>
+  </div>
+  <a href="/posts" class="btn btn-primary">Back to Posts</a>
+</div>
+</body>
+</html>
