@@ -30,7 +30,7 @@ public class PostController {
 
      @PostMapping("/posts/new")
     public String savePost(@ModelAttribute PostFormDto postFormDto){
-         System.out.println("새로운 글 데이더 받음" + postFormDto);
+         System.out.println("새로운 글 데이터 받음" + postFormDto);
         postService.savePost(postFormDto);
          System.out.println("redirecting,,,");
         return "redirect:/posts";
