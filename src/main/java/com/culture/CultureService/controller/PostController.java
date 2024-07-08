@@ -1,14 +1,13 @@
 package com.culture.CultureService.controller;
 
 import com.culture.CultureService.dto.PostFormDto;
+import com.culture.CultureService.entity.Post;
 import com.culture.CultureService.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,5 +33,14 @@ public class PostController {
         postService.savePost(postFormDto);
          System.out.println("redirecting,,,");
         return "redirect:/posts";
+     }
+
+     @GetMapping("/posts/{id}")
+    public String viewPost(@PathVariable("id") Long id, Model model){
+         System.out.println("글, id 가져오는중" + id);
+        Post post = postService.getPostById(id);
+         System.out.println("가져온 글" + post);
+        model.addAttribute("post",post);
+        return "post_detail";
      }
 }
