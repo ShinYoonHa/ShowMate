@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,5 +30,14 @@ public class PostService {
         post.setAuthor(postFormDto.getAuthor()); // 작성자 필드 설정
         postRepository.save(post);
         System.out.println("저장완료"+ post);
+    }
+
+    public Post getPostById(Long id){
+        Optional<Post> post = postRepository.findById(id);
+        if(post.isPresent()){
+            return post.get();
+        }else {
+            throw new IllegalArgumentException("Invalid post Id:" + id);
+        }
     }
 }
