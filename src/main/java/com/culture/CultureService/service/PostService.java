@@ -3,6 +3,8 @@ package com.culture.CultureService.service;
 import com.culture.CultureService.dto.PostFormDto;
 import com.culture.CultureService.entity.Post;
 import com.culture.CultureService.repository.PostRepository;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +39,25 @@ public class PostService {
         if(post.isPresent()){
             return post.get();
         }else {
-            throw new IllegalArgumentException("Invalid post Id:" + id);
+            throw new IllegalArgumentException("잘못된 글입니다" + id);
         }
+    }
+
+    public void updatePost(Long id, PostFormDto postFormDto){
+        Post post = postRepository.findById(id)
+                .orElseThrow(EntityExistsException::new);
+        post.setTitle(postFormDto.getTitle());
+        post.setAuthor(postFormDto.getAuthor());
+        post.setContent(post.getContent());
+        post.setPostDate(post.getPostDate());
+        postRepository.save(post);
+        System.out.println("글 업데이트 성공 : " + post);
+    }
+
+    public void deletePost(Long id){
+        Post post = postRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+        postRepository.delete(post);
+        System.out.println("글 삭제 성공 : " + id);
     }
 }
