@@ -49,7 +49,6 @@
           var token = $("meta[name='_csrf']").attr("content");
           var header = $("meta[name='_csrf_header']").attr("content");
           var postId = $('#postId').val();
-          alert("aaa");
           $.ajax({
               url: '/posts/delete/' + postId,
               type: 'DELETE',
