@@ -30,6 +30,7 @@ public class ShowApiService {
 
     private final String baseUrl = "http://www.kopis.or.kr/openApi/restful/pblprfr?";
 
+    //공연 기본정보 api 통해 데이터 가져와 저장하는 메소드
     public void fetchAndSaveShowData(String stDate, String edDate, String page, String rows) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String urlStr = baseUrl + "service=" + serviceKey
@@ -45,11 +46,12 @@ public class ShowApiService {
             // 데이터가 존재하지 않을 때만 저장
             if (!showRepository.existsByShowId(showEntity.getShowId())) {
                 showRepository.save(showEntity);
-                updateShowDetail(showEntity.getShowId());
+                updateShowDetail(showEntity.getShowId()); //공연 상세정보 검색 시 String 타입 ShowId 필요.
             }
         }
     }
 
+    //xml 형식으로 오는 데이터 중 필요한 값을 추출해 리스트로 반환
     public List<ShowEntity> showApiParseXml(String xmlData) throws Exception {
         List<ShowEntity> showList = new ArrayList<>();
 
@@ -82,6 +84,7 @@ public class ShowApiService {
         return showList;
     }
 
+    //xml 내 특정 태그 속 값을 반환
     private String getElementValue(Element element, String tagName) {
         NodeList nodeList = element.getElementsByTagName(tagName);
         if (nodeList.getLength() > 0) {
@@ -91,6 +94,7 @@ public class ShowApiService {
         return null;
     }
 
+    //공연 상세정보를 받아와 기존에 저장된 기본 정보에 추가해 갱신
     private void updateShowDetail(String showId) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String detailUrlStr = "http://www.kopis.or.kr/openApi/restful/pblprfr/" + showId + "?service=" + serviceKey;
@@ -107,9 +111,6 @@ public class ShowApiService {
                 existingEntity.setAge(detailEntity.getAge());
                 existingEntity.setProducer(detailEntity.getProducer());
                 existingEntity.setTicketPrice(detailEntity.getTicketPrice());
-                existingEntity.setSummary(detailEntity.getSummary());
-                existingEntity.setArea(detailEntity.getArea());
-                existingEntity.setChild(detailEntity.getChild());
                 existingEntity.setState(detailEntity.getState());
                 existingEntity.setStoryUrl(detailEntity.getStoryUrl());
                 existingEntity.setPlaceId(detailEntity.getPlaceId());
@@ -120,6 +121,7 @@ public class ShowApiService {
         }
     }
 
+    //공연 상세정보 api 에서 필요한 값을 추출하는 메소드.
     private ShowEntity showDetailParseXml(String xmlData) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -139,9 +141,6 @@ public class ShowApiService {
                 showEntity.setAge(getElementValue(showDetailElement, "prfage"));
                 showEntity.setProducer(getElementValue(showDetailElement, "entrpsnm"));
                 showEntity.setTicketPrice(getElementValue(showDetailElement, "pcseguidance"));
-                showEntity.setSummary(getElementValue(showDetailElement, "sty"));
-                showEntity.setArea(getElementValue(showDetailElement, "area"));
-                showEntity.setChild(getElementValue(showDetailElement, "dtguidance"));
                 showEntity.setState(getElementValue(showDetailElement, "prfstate"));
                 showEntity.setStoryUrl(getElementValue(showDetailElement, "styurl"));
                 showEntity.setPlaceId(getElementValue(showDetailElement, "mt10id"));
