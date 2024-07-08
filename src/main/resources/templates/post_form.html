@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <title>New Post</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div layout:fragment="content">
+    <h1>New Post</h1>
+    <form th:action="@{/posts/new}" th:object="${postFormDto}" method="post">
+        <div class="form-group">
+            <label for="author">작성자</label>
+            <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>
+        </div>
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
+        </div>
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="postDate">날짜</label>
+            <input type="date" th:field="*{postDate}" class="form-control" id="postDate" required>
+        </div>
+        <button type="submit" class="btn btn-primary" >작성하기</button>
+    </form>
+</div>
+</body>
+</html>
