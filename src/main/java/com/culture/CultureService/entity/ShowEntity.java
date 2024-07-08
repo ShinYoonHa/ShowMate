@@ -2,6 +2,7 @@ package com.culture.CultureService.entity;
 
 import com.culture.CultureService.dto.ShowDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class ShowEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //db 저장 시 아이디
     
     private String showId; //공연 아이디
     private String title; // 공연명
@@ -31,12 +32,7 @@ public class ShowEntity {
     private String ticketPrice; //티켓 가격
     private String posterUrl; //포스터 이미지 경로 http://www...
 
-    @Column(length = 1000)
-    private String summary; //줄거리
-
-    private String area; //지역 ex.서울 특별시
     private String genre; //장르
-    private String child; //아동 유무
     private String state; //공연상태
     private String storyUrl; //소개 이미지
     private String placeId; //공연 시설 아이디
