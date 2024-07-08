@@ -32,7 +32,26 @@
 </th:block>
 
 <th:block layout:fragment="css">
-    <style></style>
+    <style>
+        .custom-card {
+            width: 230px; /* 20%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
+            margin: 0.5rem; /* 카드 간의 기본 마진 설정 */
+        }
+        .custom-container {
+            margin: 0 auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            max-width: 1250px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .custom-text {
+            margin: 5px;
+        }
+    </style>
 </th:block>
 
 <div layout:fragment="content">
@@ -43,27 +62,25 @@
     <p th:text="'총 검색 건수: ' + ${shows.totalElements}"></p>
     <hr>
     <form th:action="@{'/show/'+${shows.number}}" role="form" method="get" th:object="${shows}">
-        <div class="container text-center">
-            <div class="row row-cols-5">
+        <div class="custom-container text-center">
+            <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
                 <th:block th:each="show, status: ${shows.getContent()}">
-                    <div class="col">
-                        <div class="card">
-                            <a th:href="'/show/' + ${show.id}" class="text-dark">
-                                <img th:src="${show.posterUrl}" class="card-img-top"
-                                     th:alt="${show.title}" height="400">
-                                <div class="card-body">
-                                    <h4 class="card-title">[[${show.title}]]</h4>
-                                    <p class="card-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
-                                    <p class="card-text">장소 : [[${show.placeName}]]</p>
-                                    <p class="card-text">장르 : [[${show.genre}]]</p>
-                                    <p class="card-text">관람연령 : [[${show.age}]]</p>
-                                </div>
-                            </a>
-                        </div>
+                    <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
+                        <a th:href="'/show/' + ${show.id}" class="text-dark">
+                            <img th:src="${show.posterUrl}" class="card-img-top" th:alt="${show.title}" height="250">
+                            <div class="card-body">
+                                <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
+                                <p class="custom-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
+                                <p class="custom-text">장소 : [[${show.placeName}]]</p>
+                                <p class="custom-text">장르 : [[${show.genre}]]</p>
+                                <p class="custom-text">관람연령 : [[${show.age}]]</p>
+                            </div>
+                        </a>
                     </div>
                 </th:block>
             </div>
         </div>
+
 
         <div th:with="start=${(shows.number/maxPage) * maxPage + 1},
             end=(${(shows.totalPages == 0) ? 1 : (start + (maxPage-1) < shows.totalPages ?
