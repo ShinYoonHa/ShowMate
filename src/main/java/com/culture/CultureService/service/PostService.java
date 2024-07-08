@@ -6,6 +6,8 @@ import com.culture.CultureService.repository.PostRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,13 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
 
-    public List<Post> getPost(){
+    public List<Post> getPosts(){
         System.out.println("모든글 가져오는중");
         return postRepository.findAll();
+    }
+
+    public Page<Post> getPosts(Pageable pageable){
+        return postRepository.findAll(pageable);
     }
 
     public void savePost(PostFormDto postFormDto){

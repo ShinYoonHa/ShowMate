@@ -4,8 +4,9 @@ import com.culture.CultureService.dto.PostFormDto;
 import com.culture.CultureService.entity.Post;
 import com.culture.CultureService.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.dialect.function.array.PostgreSQLArrayPositionFunction;
-import org.springframework.boot.Banner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,12 @@ public class PostController {
     private  final PostService postService;
 
     @GetMapping("/posts")
-    public String listPosts(Model model){
-        System.out.println("리스트 가져오는중");
-        model.addAttribute("posts", postService.getPost());
+    public String listPosts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postService.getPosts(pageable);
+        model.addAttribute("posts", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
         return "post_list";
     }
      @GetMapping("/posts/new")
