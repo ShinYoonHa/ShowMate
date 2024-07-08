@@ -4,7 +4,10 @@ import com.culture.CultureService.dto.PostFormDto;
 import com.culture.CultureService.entity.Post;
 import com.culture.CultureService.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.dialect.function.array.PostgreSQLArrayPositionFunction;
 import org.springframework.boot.Banner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,4 +46,33 @@ public class PostController {
         model.addAttribute("post",post);
         return "post_detail";
      }
+
+     @GetMapping("/posts/edit/{id}")
+    public String editPostForm(@PathVariable("id") Long id, Model model){
+         System.out.println("id로 편집할 글 가져오는중 : "+id);
+         Post post = postService.getPostById(id);
+         PostFormDto postFormDto = new PostFormDto();
+         postFormDto.setAuthor(post.getAuthor());
+         postFormDto.setTitle(post.getTitle());
+         postFormDto.setContent(post.getContent());
+         postFormDto.setPostDate(post.getPostDate());
+         model.addAttribute("postFormDto", postFormDto);
+         model.addAttribute("postId", id);
+         return "post_edit_form";
+     }
+
+     @PatchMapping(value = "/posts/edit/{id}")
+    public @ResponseBody ResponseEntity updatePost(@PathVariable("id") Long id, @RequestBody PostFormDto postFormDto){
+         System.out.println("id로 글 업데이트중 : " + id);
+         postService.updatePost(id, postFormDto);
+         System.out.println("글 업데이트 성공 : " + id);
+         return new ResponseEntity<Long>(id, HttpStatus.OK);
+     }
+    @DeleteMapping(value = "/posts/delete/{id}")
+    public @ResponseBody ResponseEntity deletePost(@PathVariable("id") Long id){
+        System.out.println("id로 글 삭제중 : " + id);
+        postService.deletePost(id);
+        System.out.println("글 삭제 성공 : " + id);
+        return new ResponseEntity<Long>(id, HttpStatus.OK);
+    }
 }
