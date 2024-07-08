@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ShowDto {
 
-    private Long id; //
+    private Long id; //db 저장 시 아이디
     private String showId; //공연 아이디
     private String title; // 공연명
     private String stDate; // 공연 시작일
@@ -22,10 +22,7 @@ public class ShowDto {
     private String producer; // 제작사 (기획제작자)
     private String ticketPrice; // 티켓 가격
     private String posterUrl; // 포스터 이미지 경로
-    private String summary; // 줄거리
-    private String area; // 지역
     private String genre; // 장르
-    private String child; // 아동 유무
     private String state; // 공연 상태
     private String storyUrl; //소개 이미지
     private String placeId; //공연 시설 아이디
