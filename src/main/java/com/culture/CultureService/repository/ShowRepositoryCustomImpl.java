@@ -30,16 +30,51 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
     }
 
     // 검색 조건에 따른 BooleanExpression 메서드들
-    private BooleanExpression searchAgeEq(String searchAge) {
-        return StringUtils.isEmpty(searchAge) ? null : QShowEntity.showEntity.age.eq(searchAge);
+    // html-searchDto가 바인딩됨.
+    // html select태그 내 th:field="*{필드명}" 의 필드명 = searchDto의 변수 이름,
+    // 메소드들의 매개변수명 = searchDto 변수 이름
+
+    private BooleanExpression searchGenreEq(String searchGenre) {
+        if(StringUtils.isEmpty(searchGenre)) {
+            return null;
+        }
+        switch (searchGenre) {
+            case "theater":
+                return QShowEntity.showEntity.genre.eq("연극");
+            case "musical":
+                return QShowEntity.showEntity.genre.eq("뮤지컬");
+            case "classic":
+                return QShowEntity.showEntity.genre.eq("서양음악(클래식)");
+            case "kmusic":
+                return QShowEntity.showEntity.genre.eq("한국음악(국악)");
+            case "popularmusic":
+                return QShowEntity.showEntity.genre.eq("대중음악");
+            case "dance":
+                return QShowEntity.showEntity.genre.eq("무용");
+            case "populardance":
+                return QShowEntity.showEntity.genre.eq("대중무용");
+            case "circus/magic":
+                return QShowEntity.showEntity.genre.eq("서커스/마술");
+            case "complex":
+                return QShowEntity.showEntity.genre.eq("복합");
+            case "kid":
+                return QShowEntity.showEntity.genre.eq("아동");
+            default:
+                return null;
+
+        }
     }
 
-    private BooleanExpression searchGenreEq(String genre) {
-        return StringUtils.isEmpty(genre) ? null : QShowEntity.showEntity.genre.eq(genre);
-    }
-
-    private BooleanExpression searchTicketPriceEq(String ticketPrice) {
-        return StringUtils.isEmpty(ticketPrice) ? null : QShowEntity.showEntity.ticketPrice.eq(ticketPrice);
+    private BooleanExpression searchTicketPriceEq(String searchFee) {
+        if(StringUtils.isEmpty(searchFee)) {
+            return null;
+        }
+        if(searchFee.equals("free")) {
+            //Entity 변수 중 티켓 가격이 "전석무료" 인 Entity 반환
+            return QShowEntity.showEntity.ticketPrice.eq("전석무료 ");
+        }  else {
+            return QShowEntity.showEntity.ticketPrice.ne("전석무료 ");
+        }
     }
 
     private BooleanExpression withinDateRange(String searchDateType) {
