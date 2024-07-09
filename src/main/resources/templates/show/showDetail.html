@@ -8,6 +8,14 @@
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        // null 값을 "해당 정보 없음"으로 대체
+        $(document).ready(function() {
+            $('.show-details span').each(function() {
+                if ($(this).text().trim() === '') {
+                    $(this).text('해당정보없음');
+                }
+            });
+        });
     </script>
 </th:block>
 
@@ -22,61 +30,76 @@
         .title-container {
             display: flex;
             align-items: center;
+            margin-left: 90px;
         }
-        .title-container h2 {
+        .title-container h4 {
             margin: 0; /* 기본 마진 제거 */
         }
-        .title-container .genre{
+        .tag-container {
+            display: flex;
+            float: left;
+            justify-content: center;
+            margin-top: 10px;
+            margin-left: 90px;
+            width: 240px;
+        }
+        .tag-container .genre{
             font-size: 14px; /* 작은 글씨 크기 */
-            margin-left: 10px;
             color: blue;
             border: 1px solid blue;
+            margin: 0 10px;
         }
-        .title-container .state{
+        .tag-container .state{
             font-size: 14px; /* 작은 글씨 크기 */
-            margin-left: 10px;
             color: red;
             border: 1px solid red;
+            margin: 0 10px;
         }
         .separator {
             height: 2px; /* 선의 높이 */
             background-color: #000; /* 선의 색상 */
-            margin: 5px 0; /* 선의 상하 여백 */
+            margin: 10px auto; /* 선의 상하 여백 */
+            margin-left: 90px;
+            width: 800px;
         }
         .show-container {
             display: flex;
             align-items: flex-start;
-            max-width: 1000px; /* 최대 너비 설정 */
+            max-width: 800px; /* 최대 너비 설정 */
             margin: auto; /* 가운데 정렬 */
         }
         .show-image {
-            width: 250px;
-            height: 400px;
-            margin-right: 20px;
+            width: 240px;
+            height: 324px;
         }
         .show-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
         }
         .show-details {
             display: table;
             width: auto;
+            border-collapse: collapse; /* 테두리가 겹치지 않도록 설정 */
+            border-spacing: 0; /* 테두리 간격을 없앰 */
+            margin-left:20px;
         }
         .show-details div {
             display: table-row;
         }
         .show-details div p {
             display: table-cell;
-            padding: 5px 10px;
+            padding: 7px 10px;
+            border: 1px solid #ddd; /* 회색 테두리 추가 */
         }
         .show-details div p:first-child {
             width: 150px;
             background-color: #f7f7f7;
             text-align: center;
+            font-size: 14px;
         }
         .show-details div p:last-child {
-            width: 500px; /* 너비 조정 */
+            width: 400px; /* 너비 조정 */
+            font-size: 13px;
         }
     </style>
 </th:block>
@@ -84,16 +107,12 @@
 <div layout:fragment="content">
     <div class="custom-container">
         <div class="title-container">
-            <h2 th:text="${showDto.title}">공연 제목</h2>
-            <span class="genre" th:text="${showDto.genre}">장르</span>
-            <span class="state" th:text="${showDto.state}">공연상태</span>
+            <h4 th:text="${showDto.title}">공연 제목</h4>
         </div>
         <div class="separator"></div>
         <div class="show-container">
             <div class="show-image">
-                <div class="imageTemplate">
-                    <img th:src="${showDto.posterUrl}" class="img-fluid">
-                </div>
+                <img th:src="${showDto.posterUrl}" class="img-fluid">
             </div>
             <div class="show-details">
                 <div>
@@ -133,6 +152,10 @@
                     <p><span th:text="${showDto.producer}">기획·제작</span></p>
                 </div>
             </div>
+        </div>
+        <div class="tag-container">
+            <span class="genre" th:text="${showDto.genre}">장르</span>
+            <span class="state" th:text="${showDto.state}">공연상태</span>
         </div>
         <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
 
