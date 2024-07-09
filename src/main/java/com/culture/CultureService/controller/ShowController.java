@@ -20,7 +20,7 @@ import java.util.Optional;
 public class ShowController {
     private final ShowService showService;
 
-    @GetMapping(value = {"/show", "show/{page}"})
+    @GetMapping(value = {"/show", "show/page={page}"})
     public String showList(ShowSearchDto showSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
         //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 20개
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 20);
