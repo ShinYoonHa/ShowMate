@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8" />
+    <title>공연 목록</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery 추가 -->
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $("#searchBtn").on("click", function (e) {
+                e.preventDefault(); //검색 시 form 태그 전송 막음.
+                page(0);
+            });
+        });
+
+        function page(page) {
+            var searchPeriod = $("#searchPeriod").val();
+            var searchAge = $("#searchAge").val();
+            var searchTime = $("#searchTime").val();
+            var searchFee = $("#searchFee").val();
+            var searchGenre = $("#searchGenre").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href = "/show/" + page + "?searchPeriod=" + searchPeriod + "&searchAge=" + searchAge + "&searchTime=" + searchTime + "&searchGenre=" + searchGenre + "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <style>
+        .custom-card {
+            width: 230px; /* 20%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
+            margin: 0.5rem; /* 카드 간의 기본 마진 설정 */
+        }
+        .custom-container {
+            margin: 0 auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            max-width: 1250px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .custom-text {
+            margin: 5px;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <input type="hidden" name="searchQuery" th:value="${showSearchDto.searchQuery}">
+    <div th:if="${not #strings.isEmpty(showSearchDto.searchQuery)}" class="center">
+        <p class="h4 font-weight-bold" th:text="${showSearchDto.searchQuery} + '검색결과'"></p>
+    </div>
+    <p th:text="'총 검색 건수: ' + ${shows.totalElements}"></p>
+    <hr>
+    <form th:action="@{'/show/'+${shows.number}}" role="form" method="get" th:object="${shows}">
+        <div class="custom-container text-center">
+            <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
+                <th:block th:each="show, status: ${shows.getContent()}">
+                    <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
+                        <a th:href="'/show/' + ${show.id}" class="text-dark">
+                            <img th:src="${show.posterUrl}" class="card-img-top" th:alt="${show.title}" height="250">
+                            <div class="card-body">
+                                <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
+                                <p class="custom-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
+                                <p class="custom-text">장소 : [[${show.placeName}]]</p>
+                                <p class="custom-text">장르 : [[${show.genre}]]</p>
+                                <p class="custom-text">관람연령 : [[${show.age}]]</p>
+                            </div>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+
+        <div th:with="start=${(shows.number/maxPage) * maxPage + 1},
+            end=(${(shows.totalPages == 0) ? 1 : (start + (maxPage-1) < shows.totalPages ?
+                start + (maxPage-1) : shows.totalPages)})">
+            <ul class="pagination justify-content-center">
+                <!--                items.first : 첫번째 페이지를 가리키는가? 가리키면 비활성화(disabled), 아니면 활성화-->
+                <li class="page-item" th:classappend="${shows.first} ? 'disabled'">
+                    <a th:onclick="'javascript:page('+${shows.number - 1} + ')'" aria-label="Previous" class="page-link">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                <!--                페이지 번호는 0 부터 시작-->
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${shows.number eq page-1} ? 'active' : ''">
+                    <a th:onclick="'javascript:page('+${page-1} +')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-item" th:classappend="${shows.last} ? 'disabled'">
+                    <a th:onclick="'javascript:page(' + ${shows.number + 1} +')'" aria-label="Next" class="page-link">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row row-cols-lg-auto g-3 align-items-center" th:object="${showSearchDto}">
+            <select th:field="*{searchPeriod}" class="form-control" style="width: auto">
+                <option value="">전체기간</option>
+                <option value="1d">1일</option>
+                <option value="1w">1주</option>
+                <option value="1m">1개월</option>
+                <option value="6m">6개월</option>
+            </select>
+            <select th:field="*{searchAge}" class="form-control" style="width: auto">
+                <option value="">전체 연령가</option>
+                <option value="19">19세 이상</option>
+            </select>
+            <select th:field="*{searchFee}" class="form-control" style="width: auto">
+                <option value="">요금(전체)</option>
+                <option value="free">무료</option>
+                <option value="pay">유료</option>
+            </select>
+            <select th:field="*{searchGenre}" class="form-control" style="width: auto">
+                <option value="">장르(전체)</option>
+                <option value="theater">연극</option>
+                <option value="musical">뮤지컬</option>
+                <option value="classic">서양음악(클래식)</option>
+                <option value="kmusic">한국음악(국악)</option>
+                <option value="popularmusic">대중음악</option>
+                <option value="dance">무용(서양/한국무용)</option>
+                <option value="populardance">대중무용</option>
+                <option value="magic">마술/서커스</option>
+                <option value="complex">복합</option>
+                <option value="kid">아동</option>
+            </select>
+            <select th:field="*{searchBy}" class="form-control" style="width: auto">
+                <option value="title">제목으로</option>
+                <option value="placeName">장소명으로</option>
+            </select>
+            <input th:field="*{searchQuery}" type="text" class="form-control" style="width: auto; margin-left: 15px" placeholder="검색어를 입력하세요" />
+            <button id="searchBtn" type="submit" class="form-control btn btn-primary" style="width: auto">검색</button>
+        </div>
+    </form>
+</div>
+</html>
