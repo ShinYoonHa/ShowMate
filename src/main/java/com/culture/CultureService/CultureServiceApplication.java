@@ -19,11 +19,11 @@ public class CultureServiceApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// 임의의 값으로 테스트
-		String stDate = "20230101";
-		String edDate = "20231231";
-		String page = "1";
-		String rows = "10";
-
-		showApiService.fetchAndSaveShowData(stDate, edDate, page, rows);
+//		String stDate = "20240101";
+//		String edDate = "20240730";
+//		String page = "1";
+//		String rows = "100";
+//
+//		showApiService.fetchAndSaveShowData(stDate, edDate, page, rows);
 	}
 }
