@@ -8,14 +8,42 @@
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // null 값을 "해당 정보 없음"으로 대체
-        $(document).ready(function() {
-            $('.show-details span').each(function() {
-                if ($(this).text().trim() === '') {
-                    $(this).text('해당정보없음');
+        $(document).ready(function () {
+            // 공연 상세 정보에서 빈 값 처리
+            $(".show-details span").each(function () {
+                if ($(this).text().trim() === "") {
+                    $(this).text("해당정보없음");
                 }
             });
+
+            showIntroduction();
+
+        // 소개 버튼 클릭 시
+        $("#introButton").click(function () {
+            showIntroduction();
         });
+
+        // 공연장 버튼 클릭 시
+        $("#venueButton").click(function () {
+            showVenueInfo();
+        });
+
+        // 함수: 소개 영역 표시
+        function showIntroduction() {
+            $("#introSection").show();
+            $("#venueInfoSection").hide();
+            $("#introButton").addClass('btn-primary').removeClass('btn-secondary');
+            $("#venueButton").addClass('btn-secondary').removeClass('btn-primary');
+        }
+
+        // 함수: 공연장 정보 표시
+        function showVenueInfo() {
+            $("#introSection").hide();
+            $("#venueInfoSection").show();
+            $("#venueButton").addClass('btn-primary').removeClass('btn-secondary');
+            $("#introButton").addClass('btn-secondary').removeClass('btn-primary');
+        }
+    });
     </script>
 </th:block>
 
@@ -43,13 +71,13 @@
             margin-left: 90px;
             width: 240px;
         }
-        .tag-container .genre{
+        .tag-container .genre {
             font-size: 14px; /* 작은 글씨 크기 */
             color: blue;
             border: 1px solid blue;
             margin: 0 10px;
         }
-        .tag-container .state{
+        .tag-container .state {
             font-size: 14px; /* 작은 글씨 크기 */
             color: red;
             border: 1px solid red;
@@ -79,9 +107,9 @@
         .show-details {
             display: table;
             width: auto;
-            border-collapse: collapse; /* 테두리가 겹치지 않도록 설정 */
-            border-spacing: 0; /* 테두리 간격을 없앰 */
-            margin-left:20px;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-left: 20px;
         }
         .show-details div {
             display: table-row;
@@ -89,7 +117,7 @@
         .show-details div p {
             display: table-cell;
             padding: 7px 10px;
-            border: 1px solid #ddd; /* 회색 테두리 추가 */
+            border: 1px solid #ddd;
         }
         .show-details div p:first-child {
             width: 150px;
@@ -98,8 +126,35 @@
             font-size: 14px;
         }
         .show-details div p:last-child {
-            width: 400px; /* 너비 조정 */
+            width: 400px;
             font-size: 13px;
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .buttons-container button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .intro-content,
+        .venue-info {
+            margin-top: 20px;
+            display: none;
+        }
+        .venue-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .venue-info th,
+        .venue-info td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
         }
     </style>
 </th:block>
@@ -112,7 +167,7 @@
         <div class="separator"></div>
         <div class="show-container">
             <div class="show-image">
-                <img th:src="${showDto.posterUrl}" class="img-fluid">
+                <img th:src="${showDto.posterUrl}" class="img-fluid" />
             </div>
             <div class="show-details">
                 <div>
@@ -157,9 +212,39 @@
             <span class="genre" th:text="${showDto.genre}">장르</span>
             <span class="state" th:text="${showDto.state}">공연상태</span>
         </div>
+        <div class="buttons-container">
+            <button id="introButton" class="btn btn-primary">소개</button>
+            <button id="venueButton" class="btn btn-secondary">공연장 정보</button>
+        </div>
+        <div id="introSection" class="intro-content">
+            <h5>공연 소개 이미지</h5>
+<!--            <img th:src="${showDto.introImageUrl}" class="img-fluid" alt="소개 이미지"/>-->
+        </div>
+        <div id="venueInfoSection" class="venue-info">
+            <h5>공연장 정보</h5>
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>좌석수</th>
+                    <td>500</td>
+                </tr>
+                <tr>
+                    <th>시설특성</th>
+                    <td>무대, 음향 시스템, 조명 시스템</td>
+                </tr>
+                <tr>
+                    <th>주소</th>
+                    <td>서울특별시 강남구 강남대로 1234번지</td>
+                </tr>
+                <tr>
+                    <th>홈페이지</th>
+                    <td><a href="http://www.examplevenue.com">http://www.examplevenue.com</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
         <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
 
     </div>
 </div>
-
 </html>
