@@ -15,7 +15,7 @@
 <div th:replace="~{fragments/header :: header}"></div>
 <div layout:fragment="content">
     <h1>Edit Post</h1>
-    <form id="editPostForm" th:action="@{'/posts/edit/' + ${postId}}" th:object="${postFormDto}" method="post">
+    <form id="editPostForm" th:action="@{'/posts/edit/' + ${postId}}" th:object="${postFormDto}" method="postEntity">
         <div class="form-group">
             <label for="author">Author</label>
             <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>
@@ -62,7 +62,7 @@
                 window.location.href = '/posts';
             },
             error: function(xhr, status, error) {
-                alert('Error updating post: ' + error);
+                alert('Error updating postEntity: ' + error);
             }
         });
     }

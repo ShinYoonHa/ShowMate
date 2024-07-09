@@ -1,9 +1,9 @@
 package com.culture.CultureService.repository;
 
-import com.culture.CultureService.entity.Post;
+import com.culture.CultureService.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<PostEntity, Long> {
 }

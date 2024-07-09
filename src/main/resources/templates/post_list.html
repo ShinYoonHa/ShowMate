@@ -22,12 +22,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="post : ${posts}">
-      <td th:text="${post.id}"></td>
-      <td th:text="${post.author}"></td>
-      <td><a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}"></a></td>></td>
-      <td th:text="${post.content}"></td>
-      <td th:text="${post.regTime}"></td>
+    <tr th:each="postEntity : ${posts}">
+      <td th:text="${postEntity.id}"></td>
+      <td th:text="${postEntity.author}"></td>
+      <td><a th:href="@{'/posts/' + ${postEntity.id}}" th:text="${postEntity.title}"></a></td>></td>
+      <td th:text="${postEntity.content}"></td>
+      <td th:text="${postEntity.regTime}"></td>
     </tr>
     </tbody>
   </table>

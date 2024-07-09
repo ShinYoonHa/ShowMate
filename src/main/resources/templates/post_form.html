@@ -11,7 +11,7 @@
 <div th:replace="~{fragments/header :: header}"></div>
 <div layout:fragment="content">
     <h1>New Post</h1>
-    <form th:action="@{/posts/new}" th:object="${postFormDto}" method="post">
+    <form th:action="@{/posts/new}" th:object="${postFormDto}" method="postEntity">
         <div class="form-group">
             <label for="author">작성자</label>
             <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>

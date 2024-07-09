@@ -1,7 +1,7 @@
 package com.culture.CultureService.controller;
 
 import com.culture.CultureService.dto.PostFormDto;
-import com.culture.CultureService.entity.Post;
+import com.culture.CultureService.entity.PostEntity;
 import com.culture.CultureService.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ public class PostController {
     @GetMapping("/posts")
     public String listPosts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postService.getPosts(pageable);
+        Page<PostEntity> postPage = postService.getPosts(pageable);
         model.addAttribute("posts", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -45,21 +45,21 @@ public class PostController {
      @GetMapping("/posts/{id}")
     public String viewPost(@PathVariable("id") Long id, Model model){
          System.out.println("글, id 가져오는중" + id);
-        Post post = postService.getPostById(id);
-         System.out.println("가져온 글" + post);
-        model.addAttribute("post",post);
+        PostEntity postEntity = postService.getPostById(id);
+         System.out.println("가져온 글" + postEntity);
+        model.addAttribute("post", postEntity);
         return "post_detail";
      }
 
      @GetMapping("/posts/edit/{id}")
     public String editPostForm(@PathVariable("id") Long id, Model model){
          System.out.println("id로 편집할 글 가져오는중 : "+id);
-         Post post = postService.getPostById(id);
+         PostEntity postEntity = postService.getPostById(id);
          PostFormDto postFormDto = new PostFormDto();
-         postFormDto.setAuthor(post.getAuthor());
-         postFormDto.setTitle(post.getTitle());
-         postFormDto.setContent(post.getContent());
-         postFormDto.setPostDate(post.getPostDate());
+         postFormDto.setAuthor(postEntity.getAuthor());
+         postFormDto.setTitle(postEntity.getTitle());
+         postFormDto.setContent(postEntity.getContent());
+         postFormDto.setPostDate(postEntity.getPostDate());
          model.addAttribute("postFormDto", postFormDto);
          model.addAttribute("postId", id);
          return "post_edit_form";
