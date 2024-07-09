@@ -15,17 +15,17 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div layout:fragment="content" style="margin-left:25%;margin-right:25%">
-  <input type="hidden" id="postId" th:value="${postEntity.id}">
+  <input type="hidden" id="postId" th:value="${post.id}">
 
   <div class="d-flex">
     <div class="wd50">
-      <h1 th:text="${postEntity.title}"></h1>
+      <h1 th:text="${post.title}"></h1>
       <hr class="my-4">
-      <p><strong>Author:</strong> <span th:text="${postEntity.author}">Author Name</span></p>
-      <p><strong>Date:</strong> <span th:text="${postEntity.postDate}">Post Date</span></p>
-      <p><strong>Created At:</strong> <span th:text="${postEntity.regTime}">Created At</span></p>
+      <p><strong>Author:</strong> <span th:text="${post.author}">Author Name</span></p>
+      <p><strong>Date:</strong> <span th:text="${post.postDate}">Post Date</span></p>
+      <p><strong>Created At:</strong> <span th:text="${post.regTime}">Created At</span></p>
       <div class="text-left">
-        <p th:text="${postEntity.content}">Post Content</p>
+        <p th:text="${post.content}">Post Content</p>
       </div>
     </div>
   </div>
@@ -33,12 +33,12 @@
     <div class="container">
       <h4 class="border border-success-subtle rounded-pill display-5">Post Details</h4>
       <hr class="my-4">
-      <p class="lead" th:text="${postEntity.content}"></p>
+      <p class="lead" th:text="${post.content}"></p>
     </div>
   </div>
   <div class="text-right">
     <a href="/posts" class="btn btn-primary">Back to Posts</a>
-    <a th:href="@{'/posts/edit/' + ${postEntity.id}}" class="btn btn-warning">Edit</a>
+    <a th:href="@{'/posts/edit/' + ${post.id}}" class="btn btn-warning">Edit</a>
     <button type="button" class="btn btn-danger" id="deleteButton" onclick="deletePost()">Delete</button>
   </div>
 </div>
