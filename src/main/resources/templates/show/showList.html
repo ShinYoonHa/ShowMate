@@ -70,7 +70,7 @@
             <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
                 <th:block th:each="show, status: ${shows.getContent()}">
                     <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
-                        <a th:href="'/show/' + ${show.id}" class="text-dark">
+                        <a th:href="'/show/id=' + ${show.id}" class="text-dark">
                             <img th:src="${show.posterUrl}" class="card-img-top" th:alt="${show.title}" height="250">
                             <div class="card-body">
                                 <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
