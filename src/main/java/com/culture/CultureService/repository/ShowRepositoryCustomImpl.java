@@ -43,6 +43,10 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
     }
 
     private BooleanExpression withinDateRange(String searchDateType) {
+        if (searchDateType == null) {
+            return null;
+        }
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
         Calendar now = Calendar.getInstance();
         Date startDate = now.getTime();
