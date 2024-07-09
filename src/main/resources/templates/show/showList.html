@@ -19,14 +19,13 @@
 
         function page(page) {
             var searchPeriod = $("#searchPeriod").val();
-            var searchAge = $("#searchAge").val();
             var searchTime = $("#searchTime").val();
             var searchFee = $("#searchFee").val();
             var searchGenre = $("#searchGenre").val();
             var searchBy = $("#searchBy").val();
             var searchQuery = $("#searchQuery").val();
 
-            location.href = "/show/" + page + "?searchPeriod=" + searchPeriod + "&searchAge=" + searchAge + "&searchTime=" + searchTime + "&searchGenre=" + searchGenre + "&searchQuery=" + searchQuery;
+            location.href = "/show/" + page + "?searchPeriod=" + searchPeriod + "&searchTime=" + searchTime + "&searchGenre=" + searchGenre + "&searchQuery=" + searchQuery;
         }
     </script>
 </th:block>
@@ -111,10 +110,6 @@
                 <option value="1w">1주</option>
                 <option value="1m">1개월</option>
                 <option value="6m">6개월</option>
-            </select>
-            <select th:field="*{searchAge}" class="form-control" style="width: auto">
-                <option value="">전체 연령가</option>
-                <option value="19">19세 이상</option>
             </select>
             <select th:field="*{searchFee}" class="form-control" style="width: auto">
                 <option value="">요금(전체)</option>
