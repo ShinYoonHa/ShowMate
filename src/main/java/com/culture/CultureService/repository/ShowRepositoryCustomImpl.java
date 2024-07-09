@@ -105,7 +105,6 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
         QueryResults<ShowEntity> results = queryFactory
                 .selectFrom(show)
                 .where(
-                        searchAgeEq(showSearchDto.getSearchAge()),
                         searchGenreEq(showSearchDto.getSearchGenre()),
                         searchTicketPriceEq(showSearchDto.getSearchFee()),
                         withinDateRange(showSearchDto.getSearchPeriod()),
