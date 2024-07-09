@@ -25,13 +25,13 @@ public class PostController {
         model.addAttribute("posts", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
-        return "post_list";
+        return "post/post_list";
     }
      @GetMapping("/posts/new")
     public String newPostForm(Model model){
          System.out.println("새로운 글 표시중");
         model.addAttribute("postFormDto", new PostFormDto());
-        return "post_form";
+        return "post/post_form";
      }
 
      @PostMapping("/posts/new")
@@ -48,7 +48,7 @@ public class PostController {
         PostEntity postEntity = postService.getPostById(id);
          System.out.println("가져온 글" + postEntity);
         model.addAttribute("post", postEntity);
-        return "post_detail";
+        return "post/post_detail";
      }
 
      @GetMapping("/posts/edit/{id}")
@@ -62,7 +62,7 @@ public class PostController {
          postFormDto.setPostDate(postEntity.getPostDate());
          model.addAttribute("postFormDto", postFormDto);
          model.addAttribute("postId", id);
-         return "post_edit_form";
+         return "post/post_edit_form";
      }
 
      @PatchMapping(value = "/posts/edit/{id}")
