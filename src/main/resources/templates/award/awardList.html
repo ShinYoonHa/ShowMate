@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8" />
+    <title>수상 목록</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $("#searchBtn").on("click", function (e) {
+                e.preventDefault(); // 검색 시 form 태그 전송 막음
+                changePage(0);
+            });
+
+            $(".page-link").on("click", function (e) {
+                e.preventDefault(); // 페이지 전환 시 form 태그 전송 막음
+                var page = $(this).data("page");
+                changePage(page);
+            });
+
+            // 수상명을 잘라서 표시하는 함수 호출
+            $(".award-name").each(function() {
+                var text = $(this).text();
+                if (text.length > 20) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 20) + "...");
+                }
+            });
+        });
+
+        function changePage(page) {
+            var searchGenre = $("#searchGenre").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href = "/award/" + page + "?searchGenre=" + searchGenre + "&searchBy=" + searchBy + "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <style>
+        .custom-table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .custom-table th, .custom-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        .custom-table th {
+            background-color: #f8f9fa;
+        }
+        .custom-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            justify-content: center;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <input type="hidden" name="searchQuery" th:value="${awardSearchDto.searchQuery}">
+    <div th:if="${not #strings.isEmpty(awardSearchDto.searchQuery)}" class="center">
+        <p class="h4 font-weight-bold" th:text="${awardSearchDto.searchQuery} + ' 검색 결과'"></p>
+    </div>
+    <p th:text="'총 검색 건수: ' + ${awards.totalElements}"></p>
+    <hr>
+    <form th:action="@{'/award/'+${awards.number}}" role="form" method="get" th:object="${awardSearchDto}">
+        <div class="custom-container text-center">
+            <div class="row row-cols-lg-auto g-3 align-items-center">
+                <select id="searchGenre" th:field="*{searchGenre}" class="form-control" style="width: auto">
+                    <option value="">장르(전체)</option>
+                    <option value="theater">연극</option>
+                    <option value="musical">뮤지컬</option>
+                    <option value="classic">서양음악(클래식)</option>
+                    <option value="kmusic">한국음악(국악)</option>
+                    <option value="popularmusic">대중음악</option>
+                    <option value="dance">무용(서양/한국무용)</option>
+                    <option value="populardance">대중무용</option>
+                    <option value="magic">마술/서커스</option>
+                    <option value="complex">복합</option>
+                    <option value="kid">아동</option>
+                </select>
+                <select id="searchBy" th:field="*{searchBy}" class="form-control" style="width: auto">
+                    <option value="title">제목으로</option>
+                    <option value="awardName">수상명으로</option>
+                </select>
+                <input id="searchQuery" th:field="*{searchQuery}" type="text" class="form-control" style="width: auto; margin-left: 15px" placeholder="검색어를 입력하세요" />
+                <button id="searchBtn" type="submit" class="form-control btn btn-primary" style="width: auto">검색</button>
+            </div>
+        </div>
+
+        <div class="custom-container text-center">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>장르</th>
+                    <th>공연명</th>
+                    <th>공연 기간</th>
+                    <th>장소</th>
+                    <th>수상명</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="award, status: ${awards.getContent()}">
+                    <td th:text="${#numbers.formatInteger(status.index + 1 + awards.number * 20, 0)}"></td>
+                    <td th:text="${award.genre}"></td>
+                    <td th:text="${award.title}"></td>
+                    <td th:text="${award.stDate} + ' ~ ' + ${award.edDate}"></td>
+                    <td th:text="${award.placeName}"></td>
+                    <td class="award-name" th:text="${award.awardName}"></td> <!-- 수상명 -->
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:with="start=${(awards.number / maxPage) * maxPage + 1},
+            end=${(awards.totalPages == 0) ? 1 : (start + maxPage - 1 < awards.totalPages ? start + maxPage - 1 : awards.totalPages)}">
+            <ul class="pagination justify-content-center">
+                <!-- 첫 페이지로 이동 -->
+                <li class="page-item" th:classappend="${awards.first} ? 'disabled'">
+                    <a href="#" th:data-page="${awards.number - 1}" class="page-link">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                <!-- 페이지 번호 -->
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${awards.number == page - 1} ? 'active' : ''">
+                    <a href="#" th:data-page="${page - 1}" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <!-- 다음 페이지로 이동 -->
+                <li class="page-item" th:classappend="${awards.last} ? 'disabled'">
+                    <a href="#" th:data-page="${awards.number + 1}" class="page-link">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+</html>
