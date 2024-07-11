@@ -36,7 +36,7 @@ public class AwardApiService {
         String urlStr = baseUrl + "service=" + awardServiceKey
                 + "&stdate=" + stDate + "&eddate=" + edDate
                 + "&cpage=" + page + "&rows=" + rows;
-        System.out.println("@@@@@@@@@urlStr = " + urlStr);
+        System.out.println("<---------수상목록 API를 통해 수상목록 가져옵니다. --------->");
 
         URI uri = new URI(urlStr);
         String xmlData = restTemplate.getForObject(uri, String.class);
