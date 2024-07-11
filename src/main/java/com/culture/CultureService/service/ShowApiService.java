@@ -1,10 +1,15 @@
 package com.culture.CultureService.service;
 
+import com.culture.CultureService.entity.PlaceEntity;
 import com.culture.CultureService.entity.ShowEntity;
+import com.culture.CultureService.repository.PlaceRepository;
 import com.culture.CultureService.repository.ShowRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,8 +27,13 @@ import java.util.List;
 @Service
 public class ShowApiService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
     private ShowRepository showRepository;
+    @Autowired
+    private PlaceRepository placeRepository;
 
     @Value("${serviceKey}")
     private String serviceKey;
@@ -31,12 +41,13 @@ public class ShowApiService {
     private final String baseUrl = "http://www.kopis.or.kr/openApi/restful/pblprfr?";
 
     //공연 기본정보 api 통해 데이터 가져와 저장하는 메소드
+    @Transactional
     public void fetchAndSaveShowData(String stDate, String edDate, String page, String rows) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String urlStr = baseUrl + "service=" + serviceKey
                 + "&stdate=" + stDate + "&eddate=" + edDate
                 + "&cpage=" + page + "&rows=" + rows;
-        System.out.println("@@@@@@@@@@urlStr = " + urlStr);
+        System.out.println("<=========공연목록 API를 통해 공연정보 가져옵니다. =========>");
 
         URI uri = new URI(urlStr);
         String xmlData = restTemplate.getForObject(uri, String.class);
@@ -45,8 +56,17 @@ public class ShowApiService {
         for (ShowEntity showEntity : showList) {
             // 데이터가 존재하지 않을 때만 저장
             if (!showRepository.existsByShowId(showEntity.getShowId())) {
-                showRepository.save(showEntity);
-                updateShowDetail(showEntity.getShowId()); //공연 상세정보 검색 시 String 타입 ShowId 필요.
+                showRepository.save(showEntity); //기본정보 가진 ShowEntity 저장
+                updateShowDetail(showEntity.getShowId()); //공연 상세정보를 showId를 통해 조회 후 공연정보 갱신.
+                //갱신을 통해 갖게된 placeId로 공연장 정보 조회 후 있으면 ShowEntity의 place 변수에 저장
+                if(showEntity.getPlace() != null) {
+                    PlaceEntity placeEntity = placeRepository.findByPlaceId(showEntity.getPlace().getPlaceId());
+
+                    if(placeEntity != null) { //placeId로 찾은 값이 있으면
+                        showEntity.setPlace(placeEntity);
+                        showRepository.save(showEntity); //기본정보 가진 ShowEntity 저장
+                    }
+                }
             }
         }
     }
@@ -60,7 +80,6 @@ public class ShowApiService {
         Document document = builder.parse(new InputSource(new StringReader(xmlData)));
 
         NodeList showListNodes = document.getElementsByTagName("db");
-        System.out.println("showList 개수 :" + showListNodes.getLength());
 
         for (int i = 0; i < showListNodes.getLength(); i++) {
             Node showListNode = showListNodes.item(i);
@@ -74,7 +93,6 @@ public class ShowApiService {
                 showEntity.setTitle(getElementValue(showListElement, "prfnm"));
                 showEntity.setStDate(getElementValue(showListElement, "prfpdfrom"));
                 showEntity.setEdDate(getElementValue(showListElement, "prfpdto"));
-                showEntity.setPlaceName(getElementValue(showListElement, "fcltynm"));
                 showEntity.setGenre(getElementValue(showListElement, "genrenm"));
                 showEntity.setPosterUrl(getElementValue(showListElement, "poster"));
 
@@ -113,7 +131,7 @@ public class ShowApiService {
                 existingEntity.setTicketPrice(detailEntity.getTicketPrice());
                 existingEntity.setState(detailEntity.getState());
                 existingEntity.setStoryUrl(detailEntity.getStoryUrl());
-                existingEntity.setPlaceId(detailEntity.getPlaceId());
+                existingEntity.setPlace(detailEntity.getPlace());
                 existingEntity.setTime(detailEntity.getTime());
 
                 showRepository.save(existingEntity);
@@ -143,7 +161,8 @@ public class ShowApiService {
                 showEntity.setTicketPrice(getElementValue(showDetailElement, "pcseguidance"));
                 showEntity.setState(getElementValue(showDetailElement, "prfstate"));
                 showEntity.setStoryUrl(getElementValue(showDetailElement, "styurl"));
-                showEntity.setPlaceId(getElementValue(showDetailElement, "mt10id"));
+                showEntity.setPlace(placeRepository.findByPlaceId(
+                        getElementValue(showDetailElement,"mt10id")));
                 showEntity.setTime(getElementValue(showDetailElement, "dtguidance"));
 
                 return showEntity;

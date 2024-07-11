@@ -1,0 +1,113 @@
+.custom-container {
+    margin: 20px auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 1000px; /* 최대 너비 설정 */
+}
+.title-container {
+    text-align: center;
+    width: 100%;
+}
+.title-container h4 {
+    margin: 0; /* 기본 마진 제거 */
+}
+.tag-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+.tag-container .genre,
+.tag-container .state {
+    font-size: 14px;
+    padding: 3px 10px;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+.tag-container .genre {
+    color: blue;
+    border: 1px solid blue;
+}
+.tag-container .state {
+    color: red;
+    border: 1px solid red;
+}
+.separator {
+    height: 2px; /* 선의 높이 */
+    background-color: #000; /* 선의 색상 */
+    margin: 10px auto; /* 선의 상하 여백 */
+    width: 100%; /* 부모 컨테이너 너비에 맞춤 */
+}
+.show-container {
+    display: flex;
+    max-width: 800px;
+    margin: auto;
+}
+.show-image {
+    width: 300px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.show-image img {
+    width: 100%;
+    height: auto;
+}
+.show-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    width: 100%;
+}
+.show-details div {
+    display: table-row;
+}
+.show-details div p {
+    display: table-cell;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+}
+.show-details div p:first-child {
+    width: 150px;
+    background-color: #f7f7f7;
+    text-align: center;
+    font-size: 14px;
+}
+.show-details div p:last-child {
+    width: 420px;
+    font-size: 13px;
+}
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 세로 방향 가운데 정렬 */
+    margin: 20px auto;
+    max-width: 800px;
+}
+.buttons-container button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.intro-content,
+.venue-info {
+    margin: 20px auto;
+    max-width: 800px;
+    display: none;
+}
+.intro-content img {
+    width: 100%;
+}
+.venue-info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.venue-info th,
+.venue-info td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}

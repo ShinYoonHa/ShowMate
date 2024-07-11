@@ -1,5 +1,6 @@
 package com.culture.CultureService.controller;
 
+import com.culture.CultureService.dto.PlaceDto;
 import com.culture.CultureService.dto.ShowDto;
 import com.culture.CultureService.dto.ShowSearchDto;
 import com.culture.CultureService.entity.ShowEntity;
@@ -35,17 +36,17 @@ public class ShowController {
         return "show/showList";
     }
 
+    //공연상세페이지
     @GetMapping(value = "/id={id}")
     public String showDetail(@PathVariable("id") Long id, Model model) {
         try {
             ShowDto showDto = showService.getShowDetail(id);
-            model.addAttribute("showDto", showDto);
+            model.addAttribute("showDto",showDto);
+            return "show/showDetail";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
             return "show/showList";
         }
-
-
-        return "show/showDetail";
     }
+
 }

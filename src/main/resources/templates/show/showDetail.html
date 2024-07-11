@@ -5,104 +5,71 @@
     <title>공연상세보기</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/showDetail.css}" />
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-    </script>
-</th:block>
+        $(document).ready(function () {
+            // 공연 상세 정보에서 빈 값 처리
+            $(".show-details span").each(function () {
+                if ($(this).text().trim() === "") {
+                    $(this).text("해당정보없음");
+                }
+            });
 
-<th:block layout:fragment="css">
-    <style>
-        .custom-container {
-            margin: 20px auto;
-            padding-left: 10px;
-            padding-right: 10px;
-            max-width: 1000px; /* 최대 너비 설정 */
-        }
-        .title-container {
-            display: flex;
-            align-items: center;
-        }
-        .title-container h2 {
-            margin: 0; /* 기본 마진 제거 */
-        }
-        .title-container .genre{
-            font-size: 14px; /* 작은 글씨 크기 */
-            margin-left: 10px;
-            color: blue;
-            border: 1px solid blue;
-        }
-        .title-container .state{
-            font-size: 14px; /* 작은 글씨 크기 */
-            margin-left: 10px;
-            color: red;
-            border: 1px solid red;
-        }
-        .separator {
-            height: 2px; /* 선의 높이 */
-            background-color: #000; /* 선의 색상 */
-            margin: 5px 0; /* 선의 상하 여백 */
-        }
-        .show-container {
-            display: flex;
-            align-items: flex-start;
-            max-width: 1000px; /* 최대 너비 설정 */
-            margin: auto; /* 가운데 정렬 */
-        }
-        .show-image {
-            width: 250px;
-            height: 400px;
-            margin-right: 20px;
-        }
-        .show-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .show-details {
-            display: table;
-            width: auto;
-        }
-        .show-details div {
-            display: table-row;
-        }
-        .show-details div p {
-            display: table-cell;
-            padding: 5px 10px;
-        }
-        .show-details div p:first-child {
-            width: 150px;
-            background-color: #f7f7f7;
-            text-align: center;
-        }
-        .show-details div p:last-child {
-            width: 500px; /* 너비 조정 */
-        }
-    </style>
+            showIntroduction();
+
+            // 소개 버튼 클릭 시
+            $("#introButton").click(function () {
+                showIntroduction();
+            });
+
+            // 공연장 버튼 클릭 시
+            $("#venueButton").click(function () {
+                showVenueInfo();
+            });
+
+            // 함수: 소개 영역 표시
+            function showIntroduction() {
+                $("#introSection").show();
+                $("#venueInfoSection").hide();
+                $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
+                $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
+            }
+
+            // 함수: 공연장 정보 표시
+            function showVenueInfo() {
+                $("#introSection").hide();
+                $("#venueInfoSection").show();
+                $("#venueButton").addClass("btn-primary").removeClass("btn-secondary");
+                $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
+            }
+        });
+    </script>
 </th:block>
 
 <div layout:fragment="content">
     <div class="custom-container">
-        <div class="title-container">
-            <h2 th:text="${showDto.title}">공연 제목</h2>
-            <span class="genre" th:text="${showDto.genre}">장르</span>
-            <span class="state" th:text="${showDto.state}">공연상태</span>
-        </div>
-        <div class="separator"></div>
         <div class="show-container">
-            <div class="show-image">
-                <div class="imageTemplate">
-                    <img th:src="${showDto.posterUrl}" class="img-fluid">
+            <div class="show-image mt-5">
+                <img th:src="${showDto.posterUrl}" class="img-fluid" alt="공연포스터" />
+                <div class="tag-container">
+                    <span class="genre" th:text="${showDto.genre}">장르</span>
+                    <span class="state" th:text="${showDto.state}">공연상태</span>
                 </div>
             </div>
             <div class="show-details">
+                <div class="title-container">
+                    <h4 th:text="${showDto.title}">공연 제목</h4>
+                </div>
+                <div class="separator"></div>
                 <div>
                     <p><strong>공연기간</strong></p>
                     <p><span th:text="${showDto.stDate}">시작일</span> ~ <span th:text="${showDto.edDate}">종료일</span></p>
                 </div>
                 <div>
                     <p><strong>공연장소</strong></p>
-                    <p><span th:text="${showDto.placeName}">장소명</span></p>
+                    <p><span th:text="${showDto.placeDto.name}">장소명</span></p>
                 </div>
                 <div>
                     <p><strong>공연시간</strong></p>
@@ -134,9 +101,37 @@
                 </div>
             </div>
         </div>
+        <div class="buttons-container">
+            <button id="introButton" class="btn btn-primary">소개</button>
+            <button id="venueButton" class="btn btn-secondary">공연장 정보</button>
+        </div>
+        <div id="introSection" class="intro-content">
+            <img th:src="${showDto.storyUrl}" class="img-fluid" alt="공연 소개 이미지" />
+        </div>
+        <div id="venueInfoSection" class="venue-info">
+            <h5 th:text="${showDto.placeDto.name}">공연장 이름</h5>
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>좌석수</th>
+                    <td th:text="${showDto.placeDto.seat}"></td>
+                </tr>
+                <tr>
+                    <th>시설특성</th>
+                    <td th:text="${showDto.placeDto.feature}"></td>
+                </tr>
+                <tr>
+                    <th>주소</th>
+                    <td th:text="${showDto.placeDto.address}"></td>
+                </tr>
+                <tr>
+                    <th>홈페이지</th>
+                    <td><a th:href="${showDto.placeDto.url}" th:text="${showDto.placeDto.name}"></a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
         <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
-
     </div>
 </div>
-
 </html>
