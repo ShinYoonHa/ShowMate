@@ -138,7 +138,6 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
     public Page<ShowEntity> getShowListPage(ShowSearchDto showSearchDto, Pageable pageable) {
         QueryResults<ShowEntity> results = queryFactory
                 .selectFrom(QShowEntity.showEntity)
-                .leftJoin(QShowEntity.showEntity.place, QPlaceEntity.placeEntity).fetchJoin() // PlaceEntity를 fetch join으로 함께 로딩
                 .where(
                         searchGenreEq(showSearchDto.getSearchGenre()),
                         searchTicketPriceEq(showSearchDto.getSearchFee()),
