@@ -1,6 +1,7 @@
 package com.culture.CultureService.repository;
 
 import com.culture.CultureService.dto.ShowSearchDto;
+import com.culture.CultureService.entity.QPlaceEntity;
 import com.culture.CultureService.entity.QShowEntity;
 import com.culture.CultureService.entity.ShowEntity;
 import com.querydsl.core.QueryResults;
@@ -127,7 +128,7 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
         if ("title".equals(searchBy)) {
             return QShowEntity.showEntity.title.containsIgnoreCase(searchQuery);
         } else if ("placeName".equals(searchBy)) {
-            return QShowEntity.showEntity.placeName.containsIgnoreCase(searchQuery);
+            return QShowEntity.showEntity.place.name.containsIgnoreCase(searchQuery);
         }
 
         return null;
@@ -135,23 +136,23 @@ public class ShowRepositoryCustomImpl implements ShowRepositoryCustom {
 
     @Override
     public Page<ShowEntity> getShowListPage(ShowSearchDto showSearchDto, Pageable pageable) {
-        QShowEntity show = QShowEntity.showEntity;
-
         QueryResults<ShowEntity> results = queryFactory
-                .selectFrom(show)
+                .selectFrom(QShowEntity.showEntity)
+                .leftJoin(QShowEntity.showEntity.place, QPlaceEntity.placeEntity).fetchJoin() // PlaceEntity를 fetch join으로 함께 로딩
                 .where(
                         searchGenreEq(showSearchDto.getSearchGenre()),
                         searchTicketPriceEq(showSearchDto.getSearchFee()),
                         withinDateRange(showSearchDto.getSearchPeriod()),
                         searchByLike(showSearchDto.getSearchBy(), showSearchDto.getSearchQuery())
                 )
-                .orderBy(show.id.desc())
+                .orderBy(QShowEntity.showEntity.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
-
-        List<ShowEntity> shows = results.getResults();
-        long total = results.getTotal();
+        //메소드들에서 null 반환하면 에러 아니냐?! QueryDSL은 결과값이 null 이면 그냥 Pass 해버림
+        //fetchResults - 쿼리 결과 List와 개수를 반환
+        List<ShowEntity> shows = results.getResults(); //쿼리 결과 리스트 반환
+        long total = results.getTotal(); //전체 개수 반환
 
         return new PageImpl<>(shows, pageable, total);
     }
