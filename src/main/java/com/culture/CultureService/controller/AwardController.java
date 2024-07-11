@@ -6,6 +6,7 @@ import com.culture.CultureService.entity.AwardEntity;
 import com.culture.CultureService.entity.ShowEntity;
 import com.culture.CultureService.service.AwardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AwardController {
     private final AwardService awardService;
+
 
     @GetMapping(value = {"/award", "award/{page}"})
     public String awardList(AwardSearchDto awardSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
