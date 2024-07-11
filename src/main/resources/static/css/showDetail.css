@@ -5,8 +5,8 @@
     max-width: 1000px; /* 최대 너비 설정 */
 }
 .title-container {
+    flex: 1; /* 좌우 여백을 동일하게 하기 위해 */
     text-align: center;
-    width: 100%;
 }
 .title-container h4 {
     margin: 0; /* 기본 마진 제거 */
@@ -25,12 +25,14 @@
     border-radius: 5px;
 }
 .tag-container .genre {
-    color: blue;
-    border: 1px solid blue;
+    background-color: rgb(44, 100, 255);
+    color : white;
+    border: 1px solid rgb(44, 100, 255);
 }
 .tag-container .state {
-    color: red;
-    border: 1px solid red;
+    background-color: rgb(254, 45, 84);
+    color : white;
+    border: 1px solid rgb(254, 45, 84);
 }
 .separator {
     height: 2px; /* 선의 높이 */
@@ -40,43 +42,44 @@
 }
 .show-container {
     display: flex;
-    max-width: 800px;
-    margin: auto;
+    flex-wrap: wrap; /* 너비가 부족할 경우 줄 바꿈 */
+        margin-bottom: 20px; /* show-container 아래 여백 조정 */
 }
 .show-image {
-    width: 300px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex: 1; /* 나머지 영역을 차지하도록 설정 */
+        margin-right: 20px; /* show-details와의 간격 조정 */
+        max-width: 280px; /* 이미지 영역 최대 너비 설정 */
 }
 .show-image img {
     width: 100%;
     height: auto;
 }
+
 .show-details {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
+    flex: 2; /* 나머지 영역을 차지하도록 설정 */
+}
+.show-details table {
     width: 100%;
+    border-collapse: collapse;
 }
-.show-details div {
-    display: table-row;
-}
-.show-details div p {
-    display: table-cell;
-    padding: 7px 10px;
+
+.show-details th,
+.show-details td {
     border: 1px solid #ddd;
+    padding: 12px;
 }
-.show-details div p:first-child {
-    width: 150px;
+
+.show-details th {
     background-color: #f7f7f7;
+    font-size: 15px;
+    width: 160px;
     text-align: center;
-    font-size: 14px;
 }
-.show-details div p:last-child {
-    width: 420px;
-    font-size: 13px;
+
+.show-details td {
+    width:400px;
+    font-size: 15px;
+    text-align: left;
 }
 .buttons-container {
     display: flex;
