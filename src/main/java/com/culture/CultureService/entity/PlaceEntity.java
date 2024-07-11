@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+//ShowEntity와 연관관계 설정 시 기본 id 대신 placeId를 사용하기 위한 설정
+@Table(name = "place_entity", indexes = {
+        @Index(name = "idx_place_id", columnList = "place_id")
+})
 @Getter
 @Setter
 @ToString
