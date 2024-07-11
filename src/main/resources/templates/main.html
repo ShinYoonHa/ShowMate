@@ -1,19 +1,152 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}">
-
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout1}">
 <head>
-    <meta charset="UTF-8">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <title>쇼메이트</title>
+    <meta charset="UTF-8" />
+    <title>메인 페이지</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var ctx = document.getElementById('genreStatisticsChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: /*[[${genreLabels}]]*/ [],
+                    datasets: [
+                        {
+                            label: '공연건수',
+                            data: /*[[${performanceCounts}]]*/ [],
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y-axis-1'
+                        },
+                        {
+                            label: '총 티켓판매액',
+                            data: /*[[${totalTicketRevenues}]]*/ [],
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            type: 'line',
+                            yAxisID: 'y-axis-2'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        'y-axis-1': {
+                            type: 'linear',
+                            position: 'left'
+                        },
+                        'y-axis-2': {
+                            type: 'linear',
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</th:block>
+
 <th:block layout:fragment="css">
     <style>
-
+        .custom-container {
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 1200px;
+        }
+        .custom-card {
+            width: 23%; /* 네 개씩 나오도록 너비 조정 */
+            margin: 10px 0; /* 위아래 여백 추가 */
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+        .custom-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .custom-card-body {
+            padding: 10px;
+        }
+        .custom-card-body h6 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .custom-card-body p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
     </style>
 </th:block>
-<div layout:fragment="content">
 
+<div layout:fragment="content">
+    <div class="custom-container text-center">
+        <h1>수상 목록</h1>
+        <div id="awardCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <th:block th:each="award, status: ${awards.getContent()}">
+                    <div th:classappend="${status.index == 0} ? 'carousel-item active' : 'carousel-item'">
+                        <div class="custom-card">
+                            <img th:src="${award.posterUrl}" th:alt="${award.title}" />
+                            <div class="custom-card-body">
+                                <h6 th:text="${award.title}">제목</h6>
+                                <p th:text="${award.stDate} + ' ~ ' + ${award.edDate}">기간</p>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+            <a class="carousel-control-prev" href="#awardCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#awardCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+
+        <hr>
+
+        <h1>장르별 통계</h1>
+        <canvas id="genreStatisticsChart"></canvas>
+
+        <table class="table table-striped mt-4">
+            <thead>
+            <tr>
+                <th>장르</th>
+                <th>공연건수</th>
+                <th>상연횟수</th>
+                <th>예매수</th>
+                <th>취소수</th>
+                <th>총 티켓판매수</th>
+                <th>총 티켓판매액</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="stat : ${genreStatistics}">
+                <td th:text="${stat.genre}"></td>
+                <td th:text="${stat.performanceCount}"></td>
+                <td th:text="${stat.showCount}"></td>
+                <td th:text="${stat.reservationCount}"></td>
+                <td th:text="${stat.cancellationCount}"></td>
+                <td th:text="${stat.totalTicketSales}"></td>
+                <td th:text="${stat.totalTicketRevenue}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </html>
