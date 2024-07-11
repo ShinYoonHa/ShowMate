@@ -53,6 +53,9 @@
         .custom-text {
             margin: 5px;
         }
+        .page-item {
+            cursor: pointer;
+        }
     </style>
 </th:block>
 
@@ -75,7 +78,8 @@
                             <div class="card-body">
                                 <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
                                 <p class="custom-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
-                                <p class="custom-text">장소 : [[${show.placeName}]]</p>
+                                <p class="custom-text" th:if="${show.place != null}">장소 : [[${show.place.name}]]</p>
+                                <p class="custom-text" th:if="${show.place == null}">장소 : 해당정보없음</p>
                                 <p class="custom-text">장르 : [[${show.genre}]]</p>
                                 <p class="custom-text">관람연령 : [[${show.age}]]</p>
                             </div>

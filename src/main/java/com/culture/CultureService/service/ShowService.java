@@ -22,9 +22,12 @@ public class ShowService {
     public Page<ShowEntity> getShowListPage(ShowSearchDto showSearchDto, Pageable pageable) {
         return showRepository.getShowListPage(showSearchDto, pageable);
     }
+    //공연상세정보 페이지를 위한 ShowDto 반환
     public ShowDto getShowDetail(Long id) {
-        ShowEntity showEntity = showRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        //ShowEntity -> ShowDto
-        return ShowDto.of(showEntity);
+        ShowEntity showEntity = showRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID를 가진 공연이 존재하지 않습니다."));
+        // ShowEntity를 ShowDto로 변환
+        ShowDto showDto = ShowDto.of(showEntity);
+        return showDto;
     }
 }
