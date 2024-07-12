@@ -66,37 +66,58 @@
                     <tr>
                         <th>공연장소</th>
                         <td>
-                            <span th:if="${showDto.placeDto != ' '}" th:text="${showDto.placeDto.name}">장소명</span>
+                            <span th:if="${showDto.placeDto != null}" th:text="${showDto.placeDto.name}">장소명</span>
                             <span th:unless="${showDto.placeDto != null}">해당정보없음</span>
                         </td>
                     </tr>
                     <tr>
                         <th>공연시간</th>
-                        <td><span th:text="${showDto.time}">공연 요일 및 시간</span></td>
+                        <td>
+                            <span th:if="${showDto.time != ' '}" th:text="${showDto.time}">공연 요일 및 시간</span>
+                            <span th:unless="${showDto.time != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>런타임</th>
-                        <td><span th:text="${showDto.runtime}">런타임</span></td>
+                        <td>
+                            <span th:if="${showDto.runtime != ' '}" th:text="${showDto.runtime}">런타임</span>
+                            <span th:unless="${showDto.runtime != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>관람연령</th>
-                        <td><span th:text="${showDto.age}">관람연령</span></td>
+                        <td>
+                            <span th:if="${showDto.age != ' '}" th:text="${showDto.age}">관람연령</span>
+                            <span th:unless="${showDto.age != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>티켓가격</th>
-                        <td><span th:text="${showDto.ticketPrice}">티켓 가격</span></td>
+                        <td>
+                            <span th:if="${showDto.ticketPrice != ' '}" th:text="${showDto.ticketPrice}">티켓가격</span>
+                            <span th:unless="${showDto.ticketPrice != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>출연진</th>
-                        <td><span th:text="${showDto.cast}">출연진</span></td>
+                        <td>
+                            <span th:if="${showDto.cast != ' '}" th:text="${showDto.cast}">출연진</span>
+                            <span th:unless="${showDto.cast != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>제작진</th>
-                        <td><span th:text="${showDto.staff}">제작진</span></td>
+                        <td>
+                            <span th:if="${showDto.staff != ' '}" th:text="${showDto.staff}">제작진</span>
+                            <span th:unless="${showDto.staff != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>기획·제작</th>
-                        <td><span th:text="${showDto.producer}">기획·제작</span></td>
+                        <td>
+                            <span th:if="${showDto.producer != ' '}" th:text="${showDto.producer}">기획·제작</span>
+                            <span th:unless="${showDto.producer != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
