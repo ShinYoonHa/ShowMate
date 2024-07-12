@@ -30,4 +30,11 @@ public class ShowService {
         ShowDto showDto = ShowDto.of(showEntity);
         return showDto;
     }
+    //공연상세정보 페이지를 위한 ShowDto 반환
+    public ShowDto getShowDetail(String showId) {
+        ShowEntity showEntity = showRepository.findByShowId(showId);
+        // ShowEntity를 ShowDto로 변환
+        ShowDto showDto = ShowDto.of(showEntity);
+        return showDto;
+    }
 }

@@ -10,37 +10,7 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function () {
-            // 함수: showDto.placeDto가 null인 경우 처리
-            function handleNullPlaceDto() {
-                var placeDto = /*[[${showDto.placeDto}]]*/ null;
-
-                // 공연장소 정보 태그 처리
-                var placeNameSpan = $(".show-details span[data-field='placeName']");
-                var seatSpan = $(".show-details span[data-field='seat']");
-                var featureSpan = $(".show-details span[data-field='feature']");
-                var addressSpan = $(".show-details span[data-field='address']");
-                var urlAnchor = $(".show-details a[data-field='url']");
-
-                if (!placeDto || !placeDto.name) {
-                    placeNameSpan.text("해당정보없음");
-                    urlAnchor.text("해당정보없음").attr("href", "#");
-                } else {
-                    placeNameSpan.text(placeDto.name);
-                    urlAnchor.text(placeDto.name).attr("href", placeDto.url || "#");
-                }
-
-                seatSpan.text(placeDto && placeDto.seat ? placeDto.seat : "해당정보없음");
-                featureSpan.text(placeDto && placeDto.feature ? placeDto.feature : "해당정보없음");
-                addressSpan.text(placeDto && placeDto.address ? placeDto.address : "해당정보없음");
-            }
-
             // 공연 상세 정보에서 빈 값 처리
-            $(".show-details span").each(function () {
-                if ($(this).text().trim() === "") {
-                    $(this).text("해당정보없음");
-                }
-            });
-
             showIntroduction();
 
             // 소개 버튼 클릭 시
@@ -95,35 +65,59 @@
                     </tr>
                     <tr>
                         <th>공연장소</th>
-                        <td><span th:text="${showDto.placeDto.name}">장소명</span></td>
+                        <td>
+                            <span th:if="${showDto.placeDto != null}" th:text="${showDto.placeDto.name}">장소명</span>
+                            <span th:unless="${showDto.placeDto != null}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>공연시간</th>
-                        <td><span th:text="${showDto.time}">공연 요일 및 시간</span></td>
+                        <td>
+                            <span th:if="${showDto.time != ' '}" th:text="${showDto.time}">공연 요일 및 시간</span>
+                            <span th:unless="${showDto.time != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>런타임</th>
-                        <td><span th:text="${showDto.runtime}">런타임</span></td>
+                        <td>
+                            <span th:if="${showDto.runtime != ' '}" th:text="${showDto.runtime}">런타임</span>
+                            <span th:unless="${showDto.runtime != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>관람연령</th>
-                        <td><span th:text="${showDto.age}">관람연령</span></td>
+                        <td>
+                            <span th:if="${showDto.age != ' '}" th:text="${showDto.age}">관람연령</span>
+                            <span th:unless="${showDto.age != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>티켓가격</th>
-                        <td><span th:text="${showDto.ticketPrice}">티켓 가격</span></td>
+                        <td>
+                            <span th:if="${showDto.ticketPrice != ' '}" th:text="${showDto.ticketPrice}">티켓가격</span>
+                            <span th:unless="${showDto.ticketPrice != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>출연진</th>
-                        <td><span th:text="${showDto.cast}">출연진</span></td>
+                        <td>
+                            <span th:if="${showDto.cast != ' '}" th:text="${showDto.cast}">출연진</span>
+                            <span th:unless="${showDto.cast != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>제작진</th>
-                        <td><span th:text="${showDto.staff}">제작진</span></td>
+                        <td>
+                            <span th:if="${showDto.staff != ' '}" th:text="${showDto.staff}">제작진</span>
+                            <span th:unless="${showDto.staff != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>기획·제작</th>
-                        <td><span th:text="${showDto.producer}">기획·제작</span></td>
+                        <td>
+                            <span th:if="${showDto.producer != ' '}" th:text="${showDto.producer}">기획·제작</span>
+                            <span th:unless="${showDto.producer != ' '}">해당정보없음</span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -137,27 +131,32 @@
             <img th:src="${showDto.storyUrl}" class="img-fluid" alt="공연 소개 이미지" />
         </div>
         <div id="venueInfoSection" class="venue-info">
-            <h5 th:text="${showDto.placeDto.name}">공연장 이름</h5>
-            <table class="table table-bordered">
-                <tbody>
-                <tr>
-                    <th>좌석수</th>
-                    <td th:text="${showDto.placeDto.seat}"></td>
-                </tr>
-                <tr>
-                    <th>시설특성</th>
-                    <td th:text="${showDto.placeDto.feature}"></td>
-                </tr>
-                <tr>
-                    <th>주소</th>
-                    <td th:text="${showDto.placeDto.address}"></td>
-                </tr>
-                <tr>
-                    <th>홈페이지</th>
-                    <td><a th:href="${showDto.placeDto.url}" th:text="${showDto.placeDto.name}"></a></td>
-                </tr>
-                </tbody>
-            </table>
+            <div th:if="${showDto.placeDto != null}">
+                <h5 th:text="${showDto.placeDto.name}">공연장 이름</h5>
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th>좌석수</th>
+                        <td th:text="${showDto.placeDto.seat}"></td>
+                    </tr>
+                    <tr>
+                        <th>시설특성</th>
+                        <td th:text="${showDto.placeDto.feature}"></td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td th:text="${showDto.placeDto.address}"></td>
+                    </tr>
+                    <tr>
+                        <th>홈페이지</th>
+                        <td><a th:href="${showDto.placeDto.url}" th:text="${showDto.placeDto.name}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${showDto.placeDto == null}">
+                <p>해당정보없음</p>
+            </div>
         </div>
         <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
     </div>

@@ -1,6 +1,5 @@
 package com.culture.CultureService.controller;
 
-import com.culture.CultureService.dto.PlaceDto;
 import com.culture.CultureService.dto.ShowDto;
 import com.culture.CultureService.dto.ShowSearchDto;
 import com.culture.CultureService.entity.ShowEntity;
@@ -27,12 +26,12 @@ public class ShowController {
     @GetMapping(value = {"", "/page={page}"})
     public String showList(ShowSearchDto showSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
         //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 20개
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 20);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 15);
 
         Page<ShowEntity> shows = showService.getShowListPage(showSearchDto, pageable);
         model.addAttribute("shows", shows);
         model.addAttribute("showSearchDto", showSearchDto);
-        model.addAttribute("maxPage", 20);
+        model.addAttribute("maxPage", 10);
         return "show/showList";
     }
 
@@ -41,6 +40,18 @@ public class ShowController {
     public String showDetail(@PathVariable("id") Long id, Model model) {
         try {
             ShowDto showDto = showService.getShowDetail(id);
+            model.addAttribute("showDto",showDto);
+            return "show/showDetail";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
+            return "show/showList";
+        }
+    }
+    //공연상세페이지
+    @GetMapping(value = "/showId={showId}")
+    public String showDetail(@PathVariable("showId") String showId, Model model) {
+        try {
+            ShowDto showDto = showService.getShowDetail(showId);
             model.addAttribute("showDto",showDto);
             return "show/showDetail";
         } catch (EntityNotFoundException e) {

@@ -15,6 +15,13 @@
                 e.preventDefault(); //검색 시 form 태그 전송 막음.
                 page(0);
             });
+            // 공연명 잘라서 표시하는 함수 호출
+            $(".card-title strong").each(function() {
+                var text = $(this).text();
+                if (text.length > 33) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 33) + "⋯");
+                }
+            });
         });
 
         function page(page) {
@@ -35,23 +42,38 @@
 
 <th:block layout:fragment="css">
     <style>
-        .custom-card {
-            width: 230px; /* 20%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
-            margin: 0.5rem; /* 카드 간의 기본 마진 설정 */
+        .totalCount,
+        .searchResult {
+            text-align: center;
+        }
+        .search-container {
+            width: 1280px;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            margin: 10px auto;
         }
         .custom-container {
+            width: 1300px;
             margin: 0 auto;
-            padding-left: 10px;
-            padding-right: 10px;
-            max-width: 1250px;
         }
         .card-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: flex-start;
+        }
+        .custom-card {
+            width: 250px; /* 20%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
+            margin-bottom: 15px;
+            margin-right: 10px;
+        }
+        /*5개 째 요소의 우측 여백을 없앰*/
+        .card-container > .custom-card:nth-child(5n) {
+            margin-right: 0;
         }
         .custom-text {
             margin: 5px;
+            font-size: 14px;
         }
         .page-item {
             cursor: pointer;
@@ -60,59 +82,14 @@
 </th:block>
 
 <div layout:fragment="content">
-
-        <input type="hidden" name="searchQuery" th:value="${showSearchDto.searchQuery}">
-        <div th:if="${not #strings.isEmpty(showSearchDto.searchQuery)}" >
-            <p class="h4 font-weight-bold" th:text="${showSearchDto.searchQuery} + '검색결과'"></p>
-        </div>
-        <p th:text="'총 검색 건수: ' + ${shows.totalElements}"></p>
-        <hr>
-
+    <input type="hidden" name="searchQuery" th:value="${showSearchDto.searchQuery}">
+    <div class="searchResult" th:if="${not #strings.isEmpty(showSearchDto.searchQuery)}" >
+        <p class="h4 font-weight-bold" th:text="${showSearchDto.searchQuery} + '검색결과'"></p>
+    </div>
+    <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${shows.totalElements}"></p>
+    <hr>
     <form th:action="@{'/show/page='+${shows.number}}" role="form" method="get" th:object="${shows}">
-        <div class="custom-container text-center">
-            <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
-                <th:block th:each="show, status: ${shows.getContent()}">
-                    <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
-                        <a th:href="'/show/id=' + ${show.id}" class="text-dark">
-                            <img th:src="${show.posterUrl}" class="card-img-top" th:alt="${show.title}" height="250">
-                            <div class="card-body">
-                                <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
-                                <p class="custom-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
-                                <p class="custom-text" th:if="${show.place != null}">장소 : [[${show.place.name}]]</p>
-                                <p class="custom-text" th:if="${show.place == null}">장소 : 해당정보없음</p>
-                                <p class="custom-text">장르 : [[${show.genre}]]</p>
-                                <p class="custom-text">관람연령 : [[${show.age}]]</p>
-                            </div>
-                        </a>
-                    </div>
-                </th:block>
-            </div>
-        </div>
-
-
-        <div th:with="start=${(shows.number/maxPage) * maxPage + 1},
-            end=(${(shows.totalPages == 0) ? 1 : (start + (maxPage-1) < shows.totalPages ?
-                start + (maxPage-1) : shows.totalPages)})">
-            <ul class="pagination justify-content-center">
-                <!--                items.first : 첫번째 페이지를 가리키는가? 가리키면 비활성화(disabled), 아니면 활성화-->
-                <li class="page-item" th:classappend="${shows.first} ? 'disabled'">
-                    <a th:onclick="'javascript:page('+${shows.number - 1} + ')'" aria-label="Previous" class="page-link">
-                        <span aria-hidden="true">Previous</span>
-                    </a>
-                </li>
-                <!--                페이지 번호는 0 부터 시작-->
-                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${shows.number eq page-1} ? 'active' : ''">
-                    <a th:onclick="'javascript:page('+${page-1} +')'" th:inline="text" class="page-link">[[${page}]]</a>
-                </li>
-                <li class="page-item" th:classappend="${shows.last} ? 'disabled'">
-                    <a th:onclick="'javascript:page(' + ${shows.number + 1} +')'" aria-label="Next" class="page-link">
-                        <span aria-hidden="true">Next</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="row row-cols-lg-auto g-3 align-items-center" th:object="${showSearchDto}">
+        <div class="search-container mb-3" th:object="${showSearchDto}">
             <select th:field="*{searchPeriod}" class="form-control" style="width: auto">
                 <option value="">전체기간</option>
                 <option value="1d">1일</option>
@@ -144,6 +121,48 @@
             </select>
             <input th:field="*{searchQuery}" type="text" class="form-control" style="width: auto; margin-left: 15px" placeholder="검색어를 입력하세요" />
             <button id="searchBtn" type="submit" class="form-control btn btn-primary" style="width: auto">검색</button>
+        </div>
+        <div class="custom-container text-center">
+            <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
+                <th:block th:each="show, status: ${shows.getContent()}">
+                    <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
+                        <a th:href="'/show/id=' + ${show.id}" class="text-dark">
+                            <img th:src="${show.posterUrl}" class="card-img-top" th:alt="${show.title}" height="250">
+                            <div class="card-body p-3">
+                                <h6 class="card-title"><strong>[[${show.title}]]</strong></h6>
+                                <p class="custom-text">기간 : [[${show.stDate}]] ~ [[${show.edDate}]]</p>
+                                <p class="custom-text" th:if="${show.place != null}">장소 : [[${show.place.name}]]</p>
+                                <p class="custom-text" th:unless="${show.place != null}">장소 : 해당정보없음</p>
+                                <p class="custom-text">장르 : [[${show.genre}]]</p>
+                                <p class="custom-text" th:if="${show.age != ' '}">관람연령 : [[${show.age}]]</p>
+                                <p class="custom-text" th:unless="${show.age != ' '}">관람연령 : 해당정보없음</p>
+                            </div>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+        <div th:with="start=${(shows.number/maxPage) * maxPage + 1},
+            end=(${(shows.totalPages == 0) ? 1 : (start + (maxPage-1) < shows.totalPages ?
+                start + (maxPage-1) : shows.totalPages)})">
+            <ul class="pagination justify-content-center">
+                <!--                items.first : 첫번째 페이지를 가리키는가? 가리키면 비활성화(disabled), 아니면 활성화-->
+                <li class="page-item" th:classappend="${shows.first} ? 'disabled'">
+                    <a th:onclick="'javascript:page('+${shows.number - 1} + ')'" aria-label="Previous" class="page-link">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                <!--                페이지 번호는 0 부터 시작-->
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${shows.number eq page-1} ? 'active' : ''">
+                    <a th:onclick="'javascript:page('+${page-1} +')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-item" th:classappend="${shows.last} ? 'disabled'">
+                    <a th:onclick="'javascript:page(' + ${shows.number + 1} +')'" aria-label="Next" class="page-link">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </form>
 </div>

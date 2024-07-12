@@ -24,8 +24,15 @@
             // 수상명을 잘라서 표시하는 함수 호출
             $(".award-name").each(function() {
                 var text = $(this).text();
-                if (text.length > 20) { // 표시할 최대 길이 설정
-                    $(this).text(text.substring(0, 20) + "...");
+                if (text.length > 30) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 30) + "⋯");
+                }
+            });
+            // 장소명을 잘라서 표시하는 함수 호출
+            $(".place-name").each(function() {
+                var text = $(this).text();
+                if (text.length > 24) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 20) + "⋯");
                 }
             });
         });
@@ -42,18 +49,54 @@
 
 <th:block layout:fragment="css">
     <style>
+        .totalCount,
+        .searchResult {
+            text-align: center;
+        }
+        .custom-container {
+            margin: 0 auto;
+        }
+        .custom-row {
+            width: 1400px;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            margin: 10px auto;
+        }
         .custom-table {
-            width: 100%;
+            width: 1400px;
             margin: 0 auto;
             border-collapse: collapse;
         }
         .custom-table th, .custom-table td {
             padding: 10px;
-            text-align: left;
             border: 1px solid #dee2e6;
+            table-layout: fixed; /* 테이블 레이아웃 고정 */
         }
         .custom-table th {
             background-color: #f8f9fa;
+            text-align: center;
+            font-size: 14px;
+        }
+        .custom-table td:nth-child(1) {
+            width:40px;
+        }
+        .custom-table td:nth-child(2) {
+            width: 70px;
+        }
+        .custom-table td:nth-child(3) {
+            width: 180px;
+            text-align: left;
+        }
+        .custom-table td:nth-child(4) {
+            width: 100px;
+        }
+        .custom-table td:nth-child(5) {
+            width: 150px;
+        }
+        .custom-table td:nth-child(6) {
+            width: 200px;
+            text-align: left;
         }
         .custom-table tbody tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -61,19 +104,24 @@
         .pagination {
             justify-content: center;
         }
+        .custom-table td {
+            text-align: center;
+            font-size: 13px;
+        }
+
     </style>
 </th:block>
 
 <div layout:fragment="content">
     <input type="hidden" name="searchQuery" th:value="${awardSearchDto.searchQuery}">
-    <div th:if="${not #strings.isEmpty(awardSearchDto.searchQuery)}" class="center">
+    <div class="searchResult" th:if="${not #strings.isEmpty(awardSearchDto.searchQuery)}">
         <p class="h4 font-weight-bold" th:text="${awardSearchDto.searchQuery} + ' 검색 결과'"></p>
     </div>
-    <p th:text="'총 검색 건수: ' + ${awards.totalElements}"></p>
+    <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${awards.totalElements}"></p>
     <hr>
     <form th:action="@{'/award/page='+${awards.number}}" role="form" method="get" th:object="${awardSearchDto}">
-        <div class="custom-container text-center">
-            <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="custom-container mb-3">
+            <div class="custom-row align-items-center">
                 <select id="searchGenre" th:field="*{searchGenre}" class="form-control" style="width: auto">
                     <option value="">장르(전체)</option>
                     <option value="theater">연극</option>
@@ -96,7 +144,7 @@
             </div>
         </div>
 
-        <div class="custom-container text-center">
+        <div class="custom-container mb-3">
             <table class="custom-table">
                 <thead>
                 <tr>
@@ -110,12 +158,14 @@
                 </thead>
                 <tbody>
                 <tr th:each="award, status: ${awards.getContent()}">
-                    <td th:text="${#numbers.formatInteger(status.index + 1 + awards.number * 20, 0)}"></td>
-                    <td th:text="${award.genre}"></td>
-                    <td th:text="${award.title}"></td>
-                    <td th:text="${award.stDate} + ' ~ ' + ${award.edDate}"></td>
-                    <td th:text="${award.placeName}"></td>
-                    <td class="award-name" th:text="${award.awardName}"></td> <!-- 수상명 -->
+                    <td th:text="${#numbers.formatInteger(status.index + 1 + awards.number * 15, 0)}">번호</td>
+                    <td th:text="${award.genre}">공연 장르</td>
+                    <td>
+                        <a th:href="'/show/showId=' + ${award.awardId}" class="text-blue">[[${award.title}]]</a>
+                    </td>
+                    <td th:text="${award.stDate} + ' ~ ' + ${award.edDate}">공연 기간</td>
+                    <td class="place-name" th:text="${award.placeName}">공연장소</td>
+                    <td class="award-name" th:text="${award.awardName}">수상명</td> <!-- 수상명 -->
                 </tr>
                 </tbody>
             </table>
