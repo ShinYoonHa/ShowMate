@@ -43,6 +43,9 @@ public class ShowDto {
 
     public static ShowDto of(ShowEntity showEntity) { //ShowEntity 정보를 ShowDto에 띄워주는 메소드
        ShowDto showDto = modelMapper.map(showEntity, ShowDto.class);
+       if(showEntity.getPlace() == null) {
+           return null;
+       }
        showDto.setPlaceDto(PlaceDto.of(showEntity.getPlace()));
 
        return showDto;
