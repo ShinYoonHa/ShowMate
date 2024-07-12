@@ -47,5 +47,17 @@ public class ShowController {
             return "show/showList";
         }
     }
+    //공연상세페이지
+    @GetMapping(value = "/showId={showId}")
+    public String showDetail(@PathVariable("showId") String showId, Model model) {
+        try {
+            ShowDto showDto = showService.getShowDetail(showId);
+            model.addAttribute("showDto",showDto);
+            return "show/showDetail";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
+            return "show/showList";
+        }
+    }
 
 }
