@@ -150,13 +150,15 @@
             margin: 5px 0;
         }
         .carousel-controls {
-            position: relative;
-            width: 100%;
-        }
-        .carousel-control-prev, .carousel-control-next {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10; /* z-index 값을 높게 설정하여 앞에 오도록 합니다 */
+        }
+        .carousel-control-prev, .carousel-control-next {
             width: 40px;
             height: 40px;
             background-color: rgba(0, 0, 0, 0.75);
@@ -168,7 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1;
+            z-index: 11; /* 버튼의 z-index 값을 높게 설정합니다 */
         }
         .carousel-control-prev {
             left: -20px;
@@ -226,10 +228,16 @@
     <div class="custom-container text-center">
         <h1>수상 목록</h1>
         <div class="carousel-container">
-            <button id="prevBtn" class="carousel-control-prev">
-                <i class="fas fa-chevron-left"></i>
-                <span class="sr-only">Previous</span>
-            </button>
+            <div class="carousel-controls">
+                <button id="prevBtn" class="carousel-control-prev">
+                    <i class="fas fa-chevron-left"></i>
+                    <span class="sr-only">Previous</span>
+                </button>
+                <button id="nextBtn" class="carousel-control-next">
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="sr-only">Next</span>
+                </button>
+            </div>
             <div class="carousel-inner">
                 <th:block th:each="award : ${topAwards}">
                     <div class="custom-card award-item">
@@ -241,10 +249,6 @@
                     </div>
                 </th:block>
             </div>
-            <button id="nextBtn" class="carousel-control-next">
-                <i class="fas fa-chevron-right"></i>
-                <span class="sr-only">Next</span>
-            </button>
         </div>
         <hr>
         <h1>장르별 통계</h1>
