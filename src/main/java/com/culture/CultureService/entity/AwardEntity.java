@@ -11,7 +11,7 @@ import lombok.*;
 public class AwardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
 
     private String awardId; //수상작 Id

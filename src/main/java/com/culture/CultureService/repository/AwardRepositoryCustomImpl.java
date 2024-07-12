@@ -54,7 +54,7 @@ public class AwardRepositoryCustomImpl implements AwardRepositoryCustom{
                         searchGenreEq(awardSearchDto.getSearchGenre()),
                         searchByEq(awardSearchDto.getSearchBy(), awardSearchDto.getSearchQuery())
                 )
-                .orderBy(award.Id.desc())
+                .orderBy(award.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
