@@ -13,7 +13,6 @@ public class AwardEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private String awardId; //수상작 Id
     private String title; //수상작 제목
     private String stDate; //공연 시작일

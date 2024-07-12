@@ -1,6 +1,5 @@
 package com.culture.CultureService.controller;
 
-import com.culture.CultureService.dto.PlaceDto;
 import com.culture.CultureService.dto.ShowDto;
 import com.culture.CultureService.dto.ShowSearchDto;
 import com.culture.CultureService.entity.ShowEntity;
