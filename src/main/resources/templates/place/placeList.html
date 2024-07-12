@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout1}">
 <head>
     <meta charset="UTF-8" />
-    <title>수상 목록</title>
+    <title>시설 목록</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -12,7 +12,7 @@
         $(document).ready(function () {
             $("#searchBtn").on("click", function (e) {
                 e.preventDefault(); // 검색 시 form 태그 전송 막음
-                changePage(0);
+                page(0);
             });
         });
 
@@ -28,22 +28,56 @@
 
 <th:block layout:fragment="css">
     <style>
+        .totalCount,
+        .searchResult {
+            text-align: center;
+        }
+        .custom-container {
+            margin: 0 auto;
+        }
+        .custom-row {
+            width: 1300px;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            margin: 10px auto;
+        }
         .custom-table {
-            width: 1200px;
+            width: 1300px;
+            padding: 0 100px;
             margin: 0 auto;
             border-collapse: collapse;
         }
         .custom-table th, .custom-table td {
             padding: 10px;
             border: 1px solid #dee2e6;
+            table-layout: fixed; /* 테이블 레이아웃 고정 */
         }
         .custom-table th {
             background-color: #f8f9fa;
             text-align: center;
+            font-size: 14px;
+        }
+        .custom-table td:nth-child(1) {
+            width:40px;
+        }
+        .custom-table td:nth-child(2) {
+            width: 200px;
+            text-align: left;
+        }
+        .custom-table td:nth-child(3),
+        .custom-table td:nth-child(6) {
+            width: 70px;
+        }
+        .custom-table td:nth-child(4) {
+            width: 120px;
+        }
+        .custom-table td:nth-child(5) {
+            width: 350px;
         }
         .custom-table td {
-            background-color: #f8f9fa;
-            text-align: left;
+            text-align: center;
+            font-size: 13px;
         }
 
         .custom-table tbody tr:nth-child(even) {
@@ -60,14 +94,14 @@
 
 <div layout:fragment="content">
     <input type="hidden" name="searchQuery" th:value="${placeSearchDto.searchQuery}">
-    <div th:if="${not #strings.isEmpty(placeSearchDto.searchQuery)}" class="center">
+    <div class="searchResult" th:if="${not #strings.isEmpty(placeSearchDto.searchQuery)}" >
         <p class="h4 font-weight-bold" th:text="${placeSearchDto.searchQuery} + ' 검색 결과'"></p>
     </div>
-    <p th:text="'총 검색 건수: ' + ${places.totalElements}"></p>
+    <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${places.totalElements}"></p>
     <hr>
     <form th:action="@{'/place/page='+${places.number}}" role="form" method="get" th:object="${placeSearchDto}">
-        <div class="custom-container text-center">
-            <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="custom-container mb-3">
+            <div class="custom-row align-items-center">
                 <select id="searchBy" th:field="*{searchBy}" class="form-control" style="width: auto">
                     <option value="name">장소명으로</option>
                     <option value="address">주소명으로</option>
@@ -75,9 +109,6 @@
                 <input id="searchQuery" th:field="*{searchQuery}" type="text" class="form-control" style="width: auto; margin-left: 15px" placeholder="검색어를 입력하세요" />
                 <button id="searchBtn" type="submit" class="form-control btn btn-primary" style="width: auto">검색</button>
             </div>
-        </div>
-
-        <div class="custom-container text-center">
             <table class="custom-table">
                 <thead>
                 <tr>
@@ -91,7 +122,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="place, status: ${places.getContent()}">
-                    <td th:text="${#numbers.formatInteger(status.index + 1 + places.number * 20, 0)}"></td>
+                    <td th:text="${#numbers.formatInteger(status.index + 1 + places.number * 15, 0)}"></td>
                     <td th:text="${place.name}"></td>
                     <td th:text="${place.seat}"></td>
                     <td th:text="${place.feature}"></td>
