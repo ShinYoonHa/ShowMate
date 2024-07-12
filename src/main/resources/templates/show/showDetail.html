@@ -9,7 +9,36 @@
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        $(document).ready(function () {
+            // 공연 상세 정보에서 빈 값 처리
+            showIntroduction();
 
+            // 소개 버튼 클릭 시
+            $("#introButton").click(function () {
+                showIntroduction();
+            });
+
+            // 공연장 버튼 클릭 시
+            $("#venueButton").click(function () {
+                showVenueInfo();
+            });
+
+            // 함수: 소개 영역 표시
+            function showIntroduction() {
+                $("#introSection").show();
+                $("#venueInfoSection").hide();
+                $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
+                $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
+            }
+
+            // 함수: 공연장 정보 표시
+            function showVenueInfo() {
+                $("#introSection").hide();
+                $("#venueInfoSection").show();
+                $("#venueButton").addClass("btn-primary").removeClass("btn-secondary");
+                $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
+            }
+        });
     </script>
 </th:block>
 
