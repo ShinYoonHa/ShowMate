@@ -160,9 +160,9 @@
                 <tr th:each="award, status: ${awards.getContent()}">
                     <td th:text="${#numbers.formatInteger(status.index + 1 + awards.number * 15, 0)}">번호</td>
                     <td th:text="${award.genre}">공연 장르</td>
-                    <a th:href="'/show/id=' + ${award.id}" class="text-dark">
-                        <td th:text="${award.title}">공연명</td>
-                    </a>
+                    <td>
+                        <a th:href="'/show/showId=' + ${award.awardId}" class="text-blue">[[${award.title}]]</a>
+                    </td>
                     <td th:text="${award.stDate} + ' ~ ' + ${award.edDate}">공연 기간</td>
                     <td class="place-name" th:text="${award.placeName}">공연장소</td>
                     <td class="award-name" th:text="${award.awardName}">수상명</td> <!-- 수상명 -->
