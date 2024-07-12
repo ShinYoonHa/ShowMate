@@ -1,7 +1,6 @@
 package com.culture.CultureService.repository;
 
 import com.culture.CultureService.dto.ShowSearchDto;
-import com.culture.CultureService.entity.QPlaceEntity;
 import com.culture.CultureService.entity.QShowEntity;
 import com.culture.CultureService.entity.ShowEntity;
 import com.querydsl.core.QueryResults;
