@@ -35,7 +35,7 @@
             var searchBy = $("#searchBy").val();
             var searchQuery = $("#searchQuery").val();
 
-            location.href = "/award/" + page + "?searchGenre=" + searchGenre + "&searchBy=" + searchBy + "&searchQuery=" + searchQuery;
+            location.href = "/award/page=" + page + "?searchGenre=" + searchGenre + "&searchBy=" + searchBy + "&searchQuery=" + searchQuery;
         }
     </script>
 </th:block>
@@ -71,7 +71,7 @@
     </div>
     <p th:text="'총 검색 건수: ' + ${awards.totalElements}"></p>
     <hr>
-    <form th:action="@{'/award/'+${awards.number}}" role="form" method="get" th:object="${awardSearchDto}">
+    <form th:action="@{'/award/page='+${awards.number}}" role="form" method="get" th:object="${awardSearchDto}">
         <div class="custom-container text-center">
             <div class="row row-cols-lg-auto g-3 align-items-center">
                 <select id="searchGenre" th:field="*{searchGenre}" class="form-control" style="width: auto">
