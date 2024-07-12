@@ -6,13 +6,9 @@ import com.culture.CultureService.entity.GenreStatisticEntity;
 import com.culture.CultureService.service.AwardService;
 import com.culture.CultureService.service.GenreStatisticService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +21,11 @@ public class MainController {
     private final GenreStatisticService genreStatisticService;
 
     @GetMapping(value = "/")
-    public String main(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, 12); // 페이지당 4개 표시
-        AwardSearchDto awardSearchDto = new AwardSearchDto(); // 기본 검색 DTO 생성
-        Page<AwardEntity> awards = awardService.getAwardListPage(awardSearchDto, pageable);
+    public String main(Model model) {
+        List<AwardEntity> awards = awardService.getAllAwards();
+
+        // 수상작 중 최대 10개 선택
+        List<AwardEntity> topAwards = awards.stream().limit(10).collect(Collectors.toList());
 
         // 장르별 통계 데이터 가져오기
         List<GenreStatisticEntity> genreStatistics = genreStatisticService.searchGenreStatistics(null);
@@ -39,8 +36,7 @@ public class MainController {
         List<Double> totalTicketRevenues = genreStatistics.stream().map(GenreStatisticEntity::getTotalTicketRevenue).collect(Collectors.toList());
 
         // 모델에 데이터 추가
-        model.addAttribute("awards", awards);
-        model.addAttribute("maxPage", 5); // 페이지네이션을 위한 최대 페이지 수 설정
+        model.addAttribute("topAwards", topAwards); // 추가된 부분
         model.addAttribute("genreStatistics", genreStatistics);
         model.addAttribute("genreLabels", genreLabels);
         model.addAttribute("performanceCounts", performanceCounts);
