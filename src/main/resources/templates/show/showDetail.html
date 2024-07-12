@@ -9,66 +9,7 @@
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function () {
-            // 함수: showDto.placeDto가 null인 경우 처리
-            function handleNullPlaceDto() {
-                var placeDto = /*[[${showDto.placeDto}]]*/ null;
 
-                // 공연장소 정보 태그 처리
-                var placeNameSpan = $(".show-details span[data-field='placeName']");
-                var seatSpan = $(".show-details span[data-field='seat']");
-                var featureSpan = $(".show-details span[data-field='feature']");
-                var addressSpan = $(".show-details span[data-field='address']");
-                var urlAnchor = $(".show-details a[data-field='url']");
-
-                if (!placeDto || !placeDto.name) {
-                    placeNameSpan.text("해당정보없음");
-                    urlAnchor.text("해당정보없음").attr("href", "#");
-                } else {
-                    placeNameSpan.text(placeDto.name);
-                    urlAnchor.text(placeDto.name).attr("href", placeDto.url || "#");
-                }
-
-                seatSpan.text(placeDto && placeDto.seat ? placeDto.seat : "해당정보없음");
-                featureSpan.text(placeDto && placeDto.feature ? placeDto.feature : "해당정보없음");
-                addressSpan.text(placeDto && placeDto.address ? placeDto.address : "해당정보없음");
-            }
-
-            // 공연 상세 정보에서 빈 값 처리
-            $(".show-details span").each(function () {
-                if ($(this).text().trim() === "") {
-                    $(this).text("해당정보없음");
-                }
-            });
-
-            showIntroduction();
-
-            // 소개 버튼 클릭 시
-            $("#introButton").click(function () {
-                showIntroduction();
-            });
-
-            // 공연장 버튼 클릭 시
-            $("#venueButton").click(function () {
-                showVenueInfo();
-            });
-
-            // 함수: 소개 영역 표시
-            function showIntroduction() {
-                $("#introSection").show();
-                $("#venueInfoSection").hide();
-                $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
-                $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
-            }
-
-            // 함수: 공연장 정보 표시
-            function showVenueInfo() {
-                $("#introSection").hide();
-                $("#venueInfoSection").show();
-                $("#venueButton").addClass("btn-primary").removeClass("btn-secondary");
-                $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
-            }
-        });
     </script>
 </th:block>
 
@@ -95,7 +36,10 @@
                     </tr>
                     <tr>
                         <th>공연장소</th>
-                        <td><span th:text="${showDto.placeDto.name}">장소명</span></td>
+                        <td>
+                            <span th:if="${showDto.placeDto != ' '}" th:text="${showDto.placeDto.name}">장소명</span>
+                            <span th:unless="${showDto.placeDto != null}">해당정보없음</span>
+                        </td>
                     </tr>
                     <tr>
                         <th>공연시간</th>
@@ -137,27 +81,32 @@
             <img th:src="${showDto.storyUrl}" class="img-fluid" alt="공연 소개 이미지" />
         </div>
         <div id="venueInfoSection" class="venue-info">
-            <h5 th:text="${showDto.placeDto.name}">공연장 이름</h5>
-            <table class="table table-bordered">
-                <tbody>
-                <tr>
-                    <th>좌석수</th>
-                    <td th:text="${showDto.placeDto.seat}"></td>
-                </tr>
-                <tr>
-                    <th>시설특성</th>
-                    <td th:text="${showDto.placeDto.feature}"></td>
-                </tr>
-                <tr>
-                    <th>주소</th>
-                    <td th:text="${showDto.placeDto.address}"></td>
-                </tr>
-                <tr>
-                    <th>홈페이지</th>
-                    <td><a th:href="${showDto.placeDto.url}" th:text="${showDto.placeDto.name}"></a></td>
-                </tr>
-                </tbody>
-            </table>
+            <div th:if="${showDto.placeDto != null}">
+                <h5 th:text="${showDto.placeDto.name}">공연장 이름</h5>
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th>좌석수</th>
+                        <td th:text="${showDto.placeDto.seat}"></td>
+                    </tr>
+                    <tr>
+                        <th>시설특성</th>
+                        <td th:text="${showDto.placeDto.feature}"></td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td th:text="${showDto.placeDto.address}"></td>
+                    </tr>
+                    <tr>
+                        <th>홈페이지</th>
+                        <td><a th:href="${showDto.placeDto.url}" th:text="${showDto.placeDto.name}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${showDto.placeDto == null}">
+                <p>해당정보없음</p>
+            </div>
         </div>
         <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
     </div>
