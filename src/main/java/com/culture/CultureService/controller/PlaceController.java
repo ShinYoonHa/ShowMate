@@ -25,12 +25,12 @@ public class PlaceController {
     @GetMapping(value = {"", "/page={page}"})
     public String placeList(PlaceSearchDto placeSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
         //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 20개
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 20);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 15);
 
         Page<PlaceEntity> places = placeService.getPlaceListPage(placeSearchDto, pageable);
         model.addAttribute("places", places);
         model.addAttribute("placeSearchDto", placeSearchDto);
-        model.addAttribute("maxPage", 20);
+        model.addAttribute("maxPage", 10);
         return "place/placeList";
 
 
