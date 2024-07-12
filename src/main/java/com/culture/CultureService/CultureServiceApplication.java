@@ -39,13 +39,6 @@ public class CultureServiceApplication implements CommandLineRunner {
 //		placeApiService.fetchAndSavePlaceData(page, rows);
 //		showApiService.fetchAndSaveShowData(stDate, edDate, page, rows);
 //		awardApiService.fetchAndSaveAwardData(stDate, edDate, page, rows);
-//		String stDate = "20240101";
-//		String edDate = "20240730";
-//		String page = "1";
-//		String rows = "100";
-////
-//		showApiService.fetchAndSaveShowData(stDate, edDate, page, rows);
-//		awardApiService.fetchAndSaveAwardData(stDate, edDate, page, rows);
 //		genreStatisticApiService.fetchAndSaveGenreStatistics(stDate, edDate);
 	}
 }
