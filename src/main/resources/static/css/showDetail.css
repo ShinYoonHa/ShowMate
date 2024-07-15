@@ -5,11 +5,19 @@
     max-width: 1000px; /* 최대 너비 설정 */
 }
 .title-container {
-    flex: 1; /* 좌우 여백을 동일하게 하기 위해 */
-    text-align: center;
+    display: flex;
+    align-items: center; /*세로 가운데 정렬*/
 }
 .title-container h4 {
     margin: 0; /* 기본 마진 제거 */
+}
+#likeButton {
+    border: none;
+    padding: 0;
+    line-height: 1em;
+    font-size: 30px;
+    color: red;
+    background: none;
 }
 .tag-container {
     display: flex;
@@ -37,7 +45,7 @@
 .separator {
     height: 2px; /* 선의 높이 */
     background-color: #000; /* 선의 색상 */
-    margin: 10px auto; /* 선의 상하 여백 */
+    margin: 8px auto; /* 선의 상하 여백 */
     width: 100%; /* 부모 컨테이너 너비에 맞춤 */
 }
 .show-container {
@@ -96,12 +104,16 @@
     cursor: pointer;
 }
 .intro-content,
+.comment-list,
 .venue-info {
     margin: 20px auto;
     max-width: 800px;
     display: none;
 }
 .intro-content img {
+    width: 100%;
+}
+.comment-list {
     width: 100%;
 }
 .venue-info table {
@@ -113,4 +125,10 @@
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
+}
+
+.backButton {
+    margin: 20px auto;
+    max-width: 800px;
+    align-items: start;
 }
