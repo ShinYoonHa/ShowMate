@@ -104,7 +104,7 @@
     cursor: pointer;
 }
 .intro-content,
-.comment-list,
+.comment-section,
 .venue-info {
     margin: 20px auto;
     max-width: 800px;
@@ -113,8 +113,8 @@
 .intro-content img {
     width: 100%;
 }
-.comment-list {
-    width: 100%;
+#newComment {
+    width: 100%
 }
 .venue-info table {
     width: 100%;
@@ -130,5 +130,6 @@
 .backButton {
     margin: 20px auto;
     max-width: 800px;
-    align-items: start;
+    display: none;
+    align-items:start;
 }
