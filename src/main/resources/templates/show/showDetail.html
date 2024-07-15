@@ -5,47 +5,155 @@
     <title>공연상세보기</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <link rel="stylesheet" th:href="@{/css/showDetail.css}" />
 </head>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $(document).ready(function () {
-            // 공연 상세 정보에서 빈 값 처리
+    $(document).ready(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        var isLiked = false; // 좋아요 상태를 저장할 변수
+
+        showIntroduction(); //초기에 소개 버튼 누르고 시작
+        updateLikeButton(); // 초기 좋아요 상태에 따라 버튼 초기화
+
+        // 소개 버튼 클릭 시
+        $("#introButton").click(function () {
             showIntroduction();
+        });
+        //댓글 버튼 클릭 시
+        $("#commentButton").click(function () {
+            showCommentList();
+        });
 
-            // 소개 버튼 클릭 시
-            $("#introButton").click(function () {
-                showIntroduction();
-            });
+        // 공연장 버튼 클릭 시
+        $("#venueButton").click(function () {
+            showVenueInfo();
+        });
 
-            // 공연장 버튼 클릭 시
-            $("#venueButton").click(function () {
-                showVenueInfo();
-            });
-
-            // 함수: 소개 영역 표시
-            function showIntroduction() {
-                $("#introSection").show();
-                $("#venueInfoSection").hide();
-                $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
-                $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
-            }
-
-            // 함수: 공연장 정보 표시
-            function showVenueInfo() {
-                $("#introSection").hide();
-                $("#venueInfoSection").show();
-                $("#venueButton").addClass("btn-primary").removeClass("btn-secondary");
-                $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
+        // 좋아요 버튼 누를 시 단순 색 변경. ajax 완성 시 삭제
+        $("#likeButton").click(function () {
+            if ($("#likeButton").text() == "♡") {
+                $("#likeButton").text("♥");
+                //알림창 뜨는 것과 관계없이 바로 텍스트 변경
+                setTimeout(function() {
+                    alert("좋아요를 눌렀습니다.");
+                }, 0);
+            } else {
+                $("#likeButton").text("♡");
+                //알림창 뜨는 것과 관계없이 바로 텍스트 변경
+                setTimeout(function() {
+                    alert("좋아요를 취소합니다.");
+                }, 0);
             }
         });
+        /*
+        $("#likeButton").click(function () {
+            var showLikeId = $("#showId").val(); // 좋아요를 누른 게시물 ID (예시)
+            isLiked = !isLiked; // 좋아요 상태를 toggle
+
+            // (Controller 미완성) 좋아요 추가 또는 취소를 처리하는 서버의 URL
+            var actionUrl = "/show/showId=" + showLikeId + "/" + isLiked;
+
+
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                //showDto에 담긴 showId를 가져옴
+                data: { showId: showLikeId },
+                beforeSend : function(xhr){
+                    /*데이터 전송하기 전에 헤더에 csrf 값을 설정*/
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // 서버에서 좋아요 처리 성공
+                        updateLikeButton();
+                        if (isLiked) {
+                            alert("좋아요를 눌렀습니다.");
+                        } else {
+                            alert("좋아요를 취소했습니다.");
+                        }
+                    } else {
+                        // 좋아요 처리 실패 또는 오류 발생 시 처리
+                        alert("좋아요 처리에 실패했습니다.");
+                        isLiked = !isLiked; // 상태를 이전으로 되돌림
+                        updateLikeButton(); // 버튼 상태 업데이트
+                    }
+                },
+                error: function () {
+                    // Ajax 요청 실패 시 처리
+                    alert("서버 요청 중 오류가 발생했습니다.");
+                    isLiked = !isLiked; // 상태를 이전으로 되돌림
+                    updateLikeButton(); // 버튼 상태 업데이트
+                },
+            });
+        });
+        // 좋아요 버튼 텍스트 업데이트 함수
+        function updateLikeButton() {
+            if (isLiked) {
+                $("#likeButton").text("♥");
+            } else {
+                $("#likeButton").text("♡");
+            }
+        }
+        */
+
+        // 댓글 추가 버튼 클릭 시
+        $("#addCommentButton").click(function () {
+            var newComment = $("#newComment").val();
+            if (newComment) {
+                var commentHtml = "<div class='comment'>" + newComment + "</div>";
+                $("#commentList").append(commentHtml);
+                $("#newComment").val(""); // 입력 필드 초기화
+            }
+        });
+
+        // 함수: 소개 영역 표시
+        function showIntroduction() {
+            $("#introSection").show();
+            $("#commentSection").hide();
+            $("#venueInfoSection").hide();
+            $("#commentSection").hide();
+            $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
+            $("#commentButton").addClass("btn-secondary").removeClass("btn-primary");
+            $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
+        }
+        // 함수: 댓글 목록 표시
+        function showCommentList() {
+            $("#introSection").hide();
+            $("#commentSection").show();
+            $("#venueInfoSection").hide();
+            $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
+            $("#commentButton").addClass("btn-primary").removeClass("btn-secondary");
+            $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
+
+        }
+        // 함수: 공연장 정보 표시
+        function showVenueInfo() {
+            $("#introSection").hide();
+            $("#commentSection").hide();
+            $("#venueInfoSection").show();
+            $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
+            $("#commentButton").addClass("btn-secondary").removeClass("btn-primary");
+            $("#venueButton").addClass("btn-primary").removeClass("btn-secondary");
+        }
+
+
+    });
+
     </script>
 </th:block>
 
 <div layout:fragment="content">
+    <input type="hidden" id="showId" th:value="${showDto.showId}" />
     <div class="custom-container">
         <div class="show-container">
             <div class="title-container">
+                    <button id="likeButton" class="mr-1">♡</button>
+
                 <h4 th:text="${showDto.title}">공연 제목</h4>
             </div>
             <div class="separator"></div>
@@ -125,10 +233,20 @@
         </div>
         <div class="buttons-container">
             <button id="introButton" class="btn btn-primary">소개</button>
+            <button id="commentButton" class="btn btn-secondary">댓글</button>
             <button id="venueButton" class="btn btn-secondary">공연장 정보</button>
         </div>
         <div id="introSection" class="intro-content">
             <img th:src="${showDto.storyUrl}" class="img-fluid" alt="공연 소개 이미지" />
+        </div>
+        <div id="commentSection" class="comment-section">
+            <div class="comment-form">
+                <textarea id="newComment" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                <button id="addCommentButton" class="btn btn-primary mt-2">댓글 추가</button>
+            </div>
+            <div id="commentList" class="comment-list mt-3">
+                <!-- 댓글 목록이 표시될 영역 -->
+            </div>
         </div>
         <div id="venueInfoSection" class="venue-info">
             <div th:if="${showDto.placeDto != null}">
@@ -158,7 +276,10 @@
                 <p>해당정보없음</p>
             </div>
         </div>
-        <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
+        <div class="backButton">
+            <a href="/show" class="btn btn-primary mt-3">목록으로</a>
+        </div>
+
     </div>
 </div>
 </html>
