@@ -24,8 +24,8 @@ public class MainController {
     public String main(Model model) {
         List<AwardEntity> awards = awardService.getAllAwards();
 
-        // 수상작 중 최대 10개 선택
-        List<AwardEntity> topAwards = awards.stream().limit(10).collect(Collectors.toList());
+        // 수상작 중 최대 20개 선택
+        List<AwardEntity> topAwards = awards.stream().limit(20).collect(Collectors.toList());
 
         // 장르별 통계 데이터 가져오기
         List<GenreStatisticEntity> genreStatistics = genreStatisticService.searchGenreStatistics(null);
