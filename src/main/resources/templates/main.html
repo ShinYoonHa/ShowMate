@@ -56,13 +56,11 @@
             });
 
             var currentIndex = 0;
-            var itemsPerPage = 4;
+            var itemsPerPage = 5;
             var totalItems = $('.award-item').length;
 
             function updateAwards() {
-                var start = currentIndex * itemsPerPage;
-                var end = start + itemsPerPage;
-                $('.award-item').hide().slice(start, end).show();
+                $('.award-item').hide().slice(currentIndex, currentIndex + itemsPerPage).show();
             }
 
             $('#prevBtn').click(function () {
@@ -73,7 +71,7 @@
             });
 
             $('#nextBtn').click(function () {
-                if ((currentIndex + 1) * itemsPerPage < totalItems) {
+                if (currentIndex + itemsPerPage < totalItems) {
                     currentIndex++;
                     updateAwards();
                 }
@@ -122,16 +120,23 @@
         .custom-container {
             margin: 0 auto;
             padding: 20px;
-            max-width: 1200px;
+            max-width: 1400px; /* 컨테이너의 최대 너비를 늘립니다 */
+            margin-top: 100px; /* 추가: 컨텐츠를 아래로 내리기 위해 여백을 추가 */
+        }
+        .carousel-item img {
+            max-height: 400px; /* 이미지의 최대 높이를 설정합니다 */
+            object-fit: cover; /* 이미지가 컨테이너를 덮도록 설정합니다 */
         }
         .custom-card {
             width: 23%; /* 네 개씩 나오도록 너비 조정 */
             margin: 10px 10px; /* 여백 추가 */
-            border: 1px solid #dee2e6;
+            border: 2px solid gold; /* 테두리를 금색으로 설정 */
             border-radius: 8px;
             overflow: hidden;
             text-align: center;
             display: inline-block;
+            background-color: #fffbe6; /* 카드 배경색을 연한 금색으로 설정 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 */
         }
         .custom-card img {
             width: 100%;
@@ -139,14 +144,14 @@
             object-fit: cover;
         }
         .custom-card-body {
-            padding: 10px;
+            padding: 20px;
         }
         .custom-card-body h6 {
-            font-size: 16px;
+            font-size: 20px;
             margin-bottom: 10px;
         }
         .custom-card-body p {
-            font-size: 14px;
+            font-size: 16px;
             margin: 5px 0;
         }
         .carousel-controls {
@@ -161,10 +166,8 @@
         .carousel-control-prev, .carousel-control-next {
             width: 40px;
             height: 40px;
-            background-color: rgba(0, 0, 0, 0.75);
-            border-radius: 50%;
+            background-color: transparent; /* 원형 모양을 없애기 위해 배경을 투명으로 설정 */
             border: none;
-            color: white;
             font-size: 1.5rem;
             cursor: pointer;
             display: flex;
@@ -173,19 +176,34 @@
             z-index: 11; /* 버튼의 z-index 값을 높게 설정합니다 */
         }
         .carousel-control-prev {
-            left: -20px;
+            left: 0; /* 왼쪽 버튼 위치 조정 */
+            color: #f8d7da;
+            opacity: 100;
         }
         .carousel-control-next {
-            right: -20px;
+            right: 0; /* 오른쪽 버튼 위치 조정 */
+            color: #f8d7da;
+            opacity: 100;
         }
         .carousel-container {
             position: relative;
+            margin-bottom: 75px; /* 추가: 카로셀과 수상 목록 사이에 여백을 추가합니다 */
+            margin-top: 75px;
         }
         .carousel-inner {
             display: flex;
             flex-wrap: nowrap;
             overflow: hidden;
             position: relative;
+        }
+        .carousel-item {
+            flex: 0 0 100%;
+            max-width: 100%;
+            transition: transform 1s ease; /* 전환 시간을 늘립니다 */
+        }
+        .carousel-item img {
+            width: 100%;
+            height: auto;
         }
         .statistics-container {
             display: flex;
@@ -217,17 +235,62 @@
             cursor: pointer;
         }
         .page-link.active {
-            background-color: #007bff;
+            background-color: #f8d7da;
             color: white;
-            border-color: #007bff;
+            border-color: #f8d7da;
+        }
+        .table {
+            --bs-table-color-type: initial;
+            --bs-table-bg-type: initial;
+            --bs-table-color-state: initial;
+            --bs-table-bg-state: initial;
+            --bs-table-color: #212529;
+            --bs-table-bg: var(--bs-body-bg);
+            --bs-table-border-color: #f8d7da;
+            --bs-table-accent-bg: #f8d7da;
+            --bs-table-striped-color: #000;
+            --bs-table-striped-bg: #fff;
+            --bs-table-active-color: var(--bs-body-color);
+            --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+            --bs-table-hover-color: var(--bs-body-color);
+            --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+            width: 100%;
+            margin-bottom: 1rem;
+            vertical-align: top;
+            border-color: var(--bs-table-border-color);
         }
     </style>
 </th:block>
 
 <div layout:fragment="content">
     <div class="custom-container text-center">
-        <h1>수상 목록</h1>
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="4000">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block w-100" src="/img/mainImage03.jpg">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="/img/mainImage01.jpg">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="/img/mainImage04.jpg">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="/img/mainImage02.jpg">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+
         <div class="carousel-container">
+            <h5>수상작</h5>
             <div class="carousel-controls">
                 <button id="prevBtn" class="carousel-control-prev">
                     <i class="fas fa-chevron-left"></i>
@@ -238,21 +301,25 @@
                     <span class="sr-only">Next</span>
                 </button>
             </div>
+
+
             <div class="carousel-inner">
                 <th:block th:each="award : ${topAwards}">
-                    <div class="custom-card award-item">
-                        <img th:src="${award.posterUrl}" th:alt="${award.title}" />
-                        <div class="custom-card-body">
-                            <h6 th:text="${award.title}">제목</h6>
-                            <p th:text="${award.stDate} + ' ~ ' + ${award.edDate}">기간</p>
+                        <div class="custom-card award-item">
+                            <img th:src="${award.posterUrl}" th:alt="${award.title}" />
+                            <div class="custom-card-body">
+                                <h6 th:text="${award.title}">제목</h6>
+                                <p th:text="${award.stDate} + ' ~ ' + ${award.edDate}">기간</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </th:block>
             </div>
         </div>
         <hr>
-        <h1>장르별 통계</h1>
+
         <div class="statistics-container">
+            <h5>장르별 통계</h5>
             <canvas id="genreStatisticsChart"></canvas>
             <div class="statistics-table">
                 <table class="table table-striped">
