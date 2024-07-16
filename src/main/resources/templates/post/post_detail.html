@@ -3,67 +3,160 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 <head>
-  <title>Post Detail</title>
+  <title>게시물 상세보기</title>
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}">
-</head>
+  <style>
+    body {
+        background-color: #f0f8ff; /* 밝은 파란색 배경 */
+    }
 
+    .detail-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff; /* 흰색 배경 */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .detail-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2em;
+        color: #333;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .form-group p {
+        font-size: 1.1em;
+        color: #555;
+    }
+
+    .show-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .show-details p {
+        margin-bottom: 10px;
+    }
+
+    .show-details p span {
+        font-weight: bold;
+    }
+
+    .card {
+        margin-top: 20px;
+    }
+
+    .card-header {
+        font-weight: bold;
+        background-color: #f7f7f7;
+        font-size: 1.2em;
+    }
+
+    .card-body .form-group {
+        text-align: center;
+    }
+
+    .btn-group {
+        text-align: right;
+    }
+
+    .btn-group a, .btn-group button {
+        margin-left: 10px;
+    }
+
+    .form-control[readonly] {
+        background-color: #e9ecef;
+    }
+  </style>
+</head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
-<div layout:fragment="content" style="margin-left:25%;margin-right:25%">
-  <input type="hidden" id="postId" th:value="${post.id}">
+<div layout:fragment="content">
+  <div class="detail-container">
+    <input type="hidden" id="postId" th:value="${postFormDto.id}">
 
-  <div class="d-flex">
-    <div class="wd50">
-      <h1 th:text="${post.title}"></h1>
-      <hr class="my-4">
-      <p><strong>Author:</strong> <span th:text="${post.author}">Author Name</span></p>
-      <p><strong>Date:</strong> <span th:text="${post.postDate}">Post Date</span></p>
-      <p><strong>Created At:</strong> <span th:text="${post.regTime}">Created At</span></p>
-      <div class="text-left">
-        <p th:text="${post.content}">Post Content</p>
+    <h1>게시물 상세보기</h1>
+    <div class="form-group">
+      <label for="author">작성자</label>
+      <p id="author" class="form-control" th:text="${postFormDto.author}" readonly></p>
+    </div>
+    <div class="form-group">
+      <label for="title">제목</label>
+      <p id="title" class="form-control" th:text="${postFormDto.title}" readonly></p>
+    </div>
+    <div class="form-group">
+      <label for="content">내용</label>
+      <p id="content" class="form-control" th:text="${postFormDto.content}" readonly></p>
+    </div>
+    <div class="form-group">
+      <label for="postDate">날짜</label>
+      <p id="postDate" class="form-control" th:text="${postFormDto.postDate}" readonly></p>
+    </div>
+    <div class="form-group">
+      <label for="regTime">작성시간</label>
+      <p id="regTime" class="form-control" th:text="${postFormDto.regTime}" readonly></p>
+    </div>
+
+    <!-- 공연 정보 추가 -->
+    <div class="card mt-4">
+      <div class="card-header">
+        공연 정보
+      </div>
+      <div class="card-body d-flex">
+        <div class="show-image mr-4">
+          <img th:src="${postFormDto.showPosterUrl}" class="img-fluid" alt="포스터 이미지">
+        </div>
+        <div class="show-details">
+          <p><span>공연 제목:</span> <span th:text="${postFormDto.showTitle}"></span></p>
+          <p><span>공연 기간:</span> <span th:text="${postFormDto.showPeriod}"></span></p>
+          <p><span>공연 장르:</span> <span th:text="${postFormDto.showGenre}"></span></p>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="mgt-30">
-    <div class="container">
-      <h4 class="border border-success-subtle rounded-pill display-5">Post Details</h4>
-      <hr class="my-4">
-      <p class="lead" th:text="${post.content}"></p>
+
+    <div class="btn-group mt-4">
+      <a href="/posts" class="btn btn-primary">목록으로 돌아가기</a>
+      <a th:href="@{'/posts/edit/' + ${postFormDto.id}}" class="btn btn-warning">수정</a>
+      <button type="button" class="btn btn-danger" id="deleteButton" onclick="deletePost()">삭제</button>
     </div>
-  </div>
-  <div class="text-right">
-    <a href="/posts" class="btn btn-primary">Back to Posts</a>
-    <a th:href="@{'/posts/edit/' + ${post.id}}" class="btn btn-warning">Edit</a>
-    <button type="button" class="btn btn-danger" id="deleteButton" onclick="deletePost()">Delete</button>
   </div>
 </div>
 
 <th:block layout:fragment="script">
   <script th:inline="javascript">
-  function deletePost(){
-          var token = $("meta[name='_csrf']").attr("content");
-          var header = $("meta[name='_csrf_header']").attr("content");
-          var postId = $('#postId').val();
-          $.ajax({
-              url: '/posts/delete/' + postId,
-              type: 'DELETE',
-               beforeSend : function(xhr){
-                    /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
-                    xhr.setRequestHeader(header, token);
-                },
-              success: function(result) {
-                      alert('Post deleted successfully.');
-                      window.location.href = '/posts';
-              },
-              error: function(xhr, status, error) {
-                  alert('Error deleting postEntity: ' + error);
-              }
-          });
+    function deletePost(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        var postId = $('#postId').val();
+        $.ajax({
+            url: '/posts/delete/' + postId,
+            type: 'DELETE',
+            beforeSend : function(xhr){
+                /*데이터 전송하기 전에 헤더에 csrf 값을 설정*/
+                xhr.setRequestHeader(header, token);
+            },
+            success: function(result) {
+                alert('게시물이 성공적으로 삭제되었습니다.');
+                window.location.href = '/posts';
+            },
+            error: function(xhr, status, error) {
+                alert('게시물 삭제 중 오류가 발생했습니다: ' + error);
+            }
+        });
     }
   </script>
 </th:block>

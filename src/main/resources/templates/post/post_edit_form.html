@@ -10,68 +10,175 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <style>
+        body {
+            background-color: #f0f8ff; /* 밝은 파란색 배경 */
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff; /* 흰색 배경 */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .form-group p {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .form-group img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .form-group div {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .card {
+            margin-top: 20px;
+        }
+
+        .card-header {
+            font-weight: bold;
+            background-color: #f7f7f7;
+            font-size: 1.2em;
+        }
+
+        .card-body .form-group {
+            text-align: center;
+        }
+
+        .btn-group {
+            text-align: right;
+        }
+
+        .btn-group a, .btn-group button {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div layout:fragment="content">
-    <h1>Edit Post</h1>
-    <form id="editPostForm" th:action="@{'/posts/edit/' + ${postId}}" th:object="${postFormDto}" method="post">
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>
-        </div>
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
-        </div>
-        <div class="form-group">
-            <label for="content">Content</label>
-            <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="postDate">Date</label>
-            <input type="date" th:field="*{postDate}" class="form-control" id="postDate" required>
-        </div>
-        <button type="button" id="updateButton" class="btn btn-primary">Update</button>
-    </form>
+    <div class="form-container">
+        <h1>Edit Post</h1>
+        <form id="editPostForm" th:action="@{'/posts/edit/' + ${postId}}" th:object="${postFormDto}" method="post">
+            <div class="form-group">
+                <label for="author">Author</label>
+                <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="postDate">Date</label>
+                <input type="date" th:field="*{postDate}" class="form-control" id="postDate" required>
+            </div>
+
+            <!-- 공연 정보 카드 추가 -->
+            <div class="card">
+                <div class="card-header">
+                    공연 정보
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <div>공연 제목:</div>
+                        <span th:text="${postFormDto.showTitle}"></span>
+                    </div>
+                    <div class="form-group">
+                        <div>공연 기간:</div>
+                        <span th:text="${postFormDto.showPeriod}"></span>
+                    </div>
+                    <div class="form-group">
+                        <div>공연 장르:</div>
+                        <span th:text="${postFormDto.showGenre}"></span>
+                    </div>
+                    <div class="form-group">
+                        <div>포스터 이미지:</div>
+                        <img th:src="${postFormDto.showPosterUrl}" class="img-fluid" alt="포스터 이미지">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" th:field="*{showId}">
+            <input type="hidden" th:field="*{showTitle}">
+            <input type="hidden" th:field="*{showPeriod}">
+            <input type="hidden" th:field="*{showGenre}">
+            <input type="hidden" th:field="*{showPosterUrl}">
+
+            <div class="text-center mt-4">
+                <button type="button" id="updateButton" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-    function updatePost() {
-        var token = $("meta[name='_csrf']").attr("content");
-        var header = $("meta[name='_csrf_header']").attr("content");
+        function updatePost() {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
 
-        var postId = /*[[${postId}]]*/'';
-        var postData = {
-            title: $('#title').val(),
-            content: $('#content').val(),
-            postDate: $('#postDate').val(),
-            author: $('#author').val()
-        };
+            var postId = /*[[${postId}]]*/'';
+            var postData = {
+                title: $('#title').val(),
+                content: $('#content').val(),
+                postDate: $('#postDate').val(),
+                author: $('#author').val(),
+                showId: $('input[name="showId"]').val(),
+                showTitle: $('input[name="showTitle"]').val(),
+                showPeriod: $('input[name="showPeriod"]').val(),
+                showGenre: $('input[name="showGenre"]').val(),
+                showPosterUrl: $('input[name="showPosterUrl"]').val()
+            };
 
-        $.ajax({
-            url: '/posts/edit/' + postId,
-            type: 'PATCH',
-            contentType: 'application/json',
-            data: JSON.stringify(postData),
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(header, token);
-            },
-            success: function(result) {
-                alert('Post updated successfully.');
-                window.location.href = '/posts';
-            },
-            error: function(xhr, status, error) {
-                alert('Error updating postEntity: ' + error);
-            }
+            $.ajax({
+                url: '/posts/edit/' + postId,
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify(postData),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function(result) {
+                    alert('업데이트가 완료되었습니다.');
+                    window.location.href = '/posts';
+                },
+                error: function(xhr, status, error) {
+                    alert('Error updating postEntity: ' + error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $('#updateButton').click(function() {
+                updatePost();
+            });
         });
-    }
-
-    $(document).ready(function() {
-        $('#updateButton').click(function() {
-            updatePost();
-        });
-    });
     </script>
 </th:block>
 </body>

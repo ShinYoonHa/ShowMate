@@ -5,18 +5,50 @@
 <head>
   <title>Posts</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    .table th, .table td {
+      text-align: center;
+    }
+
+    .pagination {
+      justify-content: center;
+    }
+
+    .table td a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .table td a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      padding-top: 60px; /* Adjust the padding top as needed */
+    }
+  </style>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
-<div layout:fragment="content">
-  <h1>Posts</h1>
-  <a href="/posts/new" class="btn btn-primary">New Post</a>
-  <table class="table mt-3">
+<div layout:fragment="content" class="container">
+  <h1 class="mt-3">모임게시판</h1>
+  <div class="search-bar">
+    <form class="form-inline my-2 my-lg-0" th:action="@{/posts}" method="get">
+      <input class="form-control mr-sm-2" type="search" placeholder="검색어를 입력해주세요." aria-label="Search" name="keyword" th:value="${keyword}">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
+    </form>
+  </div>
+  <table class="table table-striped mt-3">
     <thead>
     <tr>
       <th>ID</th>
       <th>작성자</th>
       <th>제목</th>
+      <th>공연 제목</th>
       <th>내용</th>
       <th>등록 날짜</th>
     </tr>
@@ -25,13 +57,14 @@
     <tr th:each="postEntity : ${posts}">
       <td th:text="${postEntity.id}"></td>
       <td th:text="${postEntity.author}"></td>
-      <td><a th:href="@{'/posts/' + ${postEntity.id}}" th:text="${postEntity.title}"></a></td>></td>
+      <td><a th:href="@{'/posts/' + ${postEntity.id}}" th:text="${postEntity.title}"></a></td>
+      <td th:text="${postEntity.showTitle}"></td>
       <td th:text="${postEntity.content}"></td>
-      <td th:text="${postEntity.regTime}"></td>
+      <td th:text="${#temporals.format(postEntity.regTime, 'yyyy-MM-dd')}"></td> <!-- 시간 제거 후 날짜만 표시 -->
     </tr>
     </tbody>
   </table>
-  <nav aria-label="Page navigation" >
+  <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
         <a class="page-link" th:href="@{'/posts?page=' + (${currentPage} - 1)}" aria-label="Previous">
