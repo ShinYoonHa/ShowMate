@@ -16,7 +16,7 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author; // 작성자 필드 추가
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class PostEntity {
     @Column(nullable = false)
     private String content; // 내용 필드
 
-    private LocalDate postDate; // 날짜 필드
+    private LocalDateTime postDate; // 날짜 필드
 
     private LocalDateTime regTime; // 작성시간
 
@@ -35,6 +35,10 @@ public class PostEntity {
     private String showPeriod;
     private String showGenre;
     private String showPosterUrl;
+
+    // 현재인원 및 정원 필드 추가
+    private int currentPeople;
+    private int maxPeople;
 
     @PrePersist
     public void prePersist(){
