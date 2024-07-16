@@ -25,7 +25,7 @@ public class AwardController {
 
     @GetMapping(value = {"", "/page={page}"})
     public String awardList(AwardSearchDto awardSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
-        //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 20개
+        //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 15개
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 15);
 
         Page<AwardEntity> awards = awardService.getAwardListPage(awardSearchDto, pageable);
