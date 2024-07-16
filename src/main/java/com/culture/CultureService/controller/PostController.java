@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -85,17 +86,23 @@ public class PostController {
         postFormDto.setShowGenre(postEntity.getShowGenre());
         postFormDto.setShowPosterUrl(postEntity.getShowPosterUrl());
 
+        // 추가된 부분
+        postFormDto.setCurrentPeople(postEntity.getCurrentPeople());
+        postFormDto.setMaxPeople(postEntity.getMaxPeople());
+
         // 날짜 형식 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = postEntity.getRegTime().format(formatter);
 
         model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("formattedDate", formattedDate); // 변환된 날짜 문자열 추가
+
+
         return "post/post_detail";
     }
 
     @GetMapping("/posts/edit/{id}")
-    public String editPostForm(@PathVariable("id") Long id, Model model) {
+    public String editPostForm(@PathVariable("id") Long id,Model model) {
         System.out.println("id로 편집할 글 가져오는중: " + id);
         PostEntity postEntity = postService.getPostById(id);
         PostFormDto postFormDto = new PostFormDto();
@@ -110,6 +117,10 @@ public class PostController {
         postFormDto.setShowPeriod(postEntity.getShowPeriod());
         postFormDto.setShowGenre(postEntity.getShowGenre());
         postFormDto.setShowPosterUrl(postEntity.getShowPosterUrl());
+
+        // 추가된 부분
+        postFormDto.setCurrentPeople(postEntity.getCurrentPeople());
+        postFormDto.setMaxPeople(postEntity.getMaxPeople());
 
         model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("postId", id);
