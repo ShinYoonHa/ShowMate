@@ -34,7 +34,6 @@ public class PostService {
         return postRepository.findAllByOrderByRegTimeDesc(pageable);
     }
 
-
     public void savePost(PostFormDto postFormDto){
         System.out.println("저장" + postFormDto);
         PostEntity postEntity = new PostEntity();
@@ -42,6 +41,8 @@ public class PostService {
         postEntity.setContent(postFormDto.getContent()); // 내용 필드 설정
         postEntity.setPostDate(postFormDto.getPostDate()); // 날짜 필드 설정
         postEntity.setAuthor(postFormDto.getAuthor()); // 작성자 필드 설정
+        postEntity.setCurrentPeople(postFormDto.getCurrentPeople()); // 현재인원 설정
+        postEntity.setMaxPeople(postFormDto.getMaxPeople()); // 정원 설정
 
         // 공연 정보 설정
         postEntity.setShowId(postFormDto.getShowId());
@@ -70,6 +71,8 @@ public class PostService {
         postEntity.setAuthor(postFormDto.getAuthor());
         postEntity.setContent(postFormDto.getContent());
         postEntity.setPostDate(postFormDto.getPostDate());
+        postEntity.setCurrentPeople(postFormDto.getCurrentPeople()); // 현재인원 업데이트
+        postEntity.setMaxPeople(postFormDto.getMaxPeople()); // 정원 업데이트
 
         // 공연 정보 업데이트
         postEntity.setShowId(postFormDto.getShowId());
@@ -92,4 +95,6 @@ public class PostService {
     public Page<PostEntity> searchPosts(String keyword, Pageable pageable) {
         return postRepository.findByKeyword(keyword, pageable);
     }
+
+
 }
