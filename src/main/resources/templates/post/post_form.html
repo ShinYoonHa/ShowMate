@@ -52,21 +52,26 @@
     <h1 class="text-center my-4">모임 생성</h1>
     <div class="form-container">
         <form th:action="@{/posts/new}" th:object="${postFormDto}" method="post">
-            <div class="form-group">
-                <label for="author">작성자</label>
-                <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="Enter author" required>
-            </div>
+
             <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
             </div>
             <div class="form-group">
-                <label for="content">내용</label>
-                <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" rows="5" required></textarea>
+                <label for="postDate">날짜 및 시간</label>
+                <input type="datetime-local" th:field="*{postDate}" class="form-control" id="postDate" required>
             </div>
             <div class="form-group">
-                <label for="postDate">날짜</label>
-                <input type="date" th:field="*{postDate}" class="form-control" id="postDate" required>
+                <label for="currentPeople">현재인원</label>
+                <input type="number" th:field="*{currentPeople}" class="form-control" id="currentPeople" placeholder="현재인원을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="maxPeople">정원</label>
+                <input type="number" th:field="*{maxPeople}" class="form-control" id="maxPeople" placeholder="정원을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" rows="5" required></textarea>
             </div>
 
             <!-- 공연 정보 카드 추가 -->
