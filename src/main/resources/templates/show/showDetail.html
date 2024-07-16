@@ -235,6 +235,10 @@
                 </table>
             </div>
         </div>
+        <div class="funcButton funcButton-container-top">
+            <a th:if="${showDto.state != '공연완료'}" th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success">모임 생성</a>
+            <a href="/show" class="btn btn-info">목록으로</a>
+        </div>
         <div class="buttons-container">
             <button id="introButton" class="btn btn-primary">소개</button>
             <button id="commentButton" class="btn btn-secondary">댓글</button>
@@ -283,10 +287,9 @@
                 <div id="map"></div>
             </div>
         </div>
-        <div class="funcButton-container">
-            <a href="/show" class="btn btn-success mt-3">목록으로</a>
-            <a id="topButton" class="btn btn-secondary mt-3">맨 위로</a>
-            <a th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success mt-3">모임 생성</a>
+        <div class="funcButton funcButton-container-bottom">
+            <a href="/show" class="btn btn-info">목록으로</a>
+            <a id="topButton" class="btn btn-secondary">맨 위로</a>
         </div>
     </div>
 </div>
