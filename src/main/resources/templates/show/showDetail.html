@@ -10,20 +10,16 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function () {
-            // 공연 상세 정보에서 빈 값 처리
             showIntroduction();
 
-            // 소개 버튼 클릭 시
             $("#introButton").click(function () {
                 showIntroduction();
             });
 
-            // 공연장 버튼 클릭 시
             $("#venueButton").click(function () {
                 showVenueInfo();
             });
 
-            // 함수: 소개 영역 표시
             function showIntroduction() {
                 $("#introSection").show();
                 $("#venueInfoSection").hide();
@@ -31,7 +27,6 @@
                 $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
             }
 
-            // 함수: 공연장 정보 표시
             function showVenueInfo() {
                 $("#introSection").hide();
                 $("#venueInfoSection").show();
@@ -42,6 +37,7 @@
     </script>
 </th:block>
 
+<body>
 <div layout:fragment="content">
     <div class="custom-container">
         <div class="show-container">
@@ -158,7 +154,11 @@
                 <p>해당정보없음</p>
             </div>
         </div>
-        <a href="/show" class="btn btn-primary mt-3">목록으로 돌아가기</a>
+        <div class="d-flex justify-content-between mt-3">
+            <a href="/show" class="btn btn-primary">목록으로 돌아가기</a>
+            <a th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success">모임 생성하기</a>
+        </div>
     </div>
 </div>
+</body>
 </html>
