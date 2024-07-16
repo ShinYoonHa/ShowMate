@@ -29,11 +29,17 @@ public class PostEntity {
 
     private LocalDateTime regTime; // 작성시간
 
+    // 공연 정보 필드 추가
+    private String showId;
+    private String showTitle;
+    private String showPeriod;
+    private String showGenre;
+    private String showPosterUrl;
+
     @PrePersist
     public void prePersist(){
         if(this.regTime == null) {
-            this.regTime = LocalDateTime.now(); //현재 시간으로 설정
+            this.regTime = LocalDateTime.now(); // 현재 시간으로 설정
         }
-
     }
 }
