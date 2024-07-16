@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
@@ -56,6 +57,20 @@ public class ShowController {
             return "show/showDetail";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
+            return "show/showList";
+        }
+    }
+    //공연상세페이지
+    @PostMapping(value = "/showId={showId}/{isLiked}")
+    public String showLike(@PathVariable("showId") String showId, @PathVariable("isLiked") String isLiked, Model model) {
+        try {
+            System.out.println("좋아요 상태: isLiked = " + isLiked);
+
+            ShowDto showDto = showService.getShowDetail(showId);
+            model.addAttribute("showDto",showDto);
+            return "show/showDetail";
+        } catch (EntityNotFoundException e) {
+            System.out.println("에러에러에러 발생");
             return "show/showList";
         }
     }
