@@ -15,8 +15,8 @@ public class PostFormDto {
     private String content; //내용
     private String author; //작성자
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate postDate; //새로운 날짜 피트
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime postDate; //새로운 날짜 피트
 
     private LocalDateTime regTime; // 작성시간 추가
 
@@ -27,6 +27,11 @@ public class PostFormDto {
     private String showPeriod;
     private String showGenre;
     private String showPosterUrl;
+
+    // 현재인원 및 정원 필드 추가
+    private int currentPeople;
+    private int maxPeople;
+
 
     @Override
     public String toString() {
@@ -42,6 +47,8 @@ public class PostFormDto {
                 ", showPeriod='" + showPeriod + '\'' +
                 ", showGenre='" + showGenre + '\'' +
                 ", showPosterUrl='" + showPosterUrl + '\'' +
+                ", currentPeople=" + currentPeople +
+                ", maxPeople=" + maxPeople +
                 '}';
     }
 
