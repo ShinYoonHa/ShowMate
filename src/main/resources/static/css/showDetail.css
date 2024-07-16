@@ -126,10 +126,22 @@
     padding: 10px;
     text-align: left;
 }
-.funcButton-container {
-    margin: 20px auto;
+
+.funcButton {
+    display: flex;
+    margin: 0 auto;
     max-width: 800px;
-    align-items:start;
+    align-items: center;
+}
+.funcButton-container-top {
+    justify-content: center;
+}
+
+.funcButton > a:nth-child(1) {
+    margin-right: 10px;
+}
+.funcButton-container-bottom {
+    justify-content: flex-start;
 }
 .map-container {
     width: 800px;
