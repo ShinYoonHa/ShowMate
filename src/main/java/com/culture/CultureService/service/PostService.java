@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,20 @@ public class PostService {
 
     public void savePost(PostFormDto postFormDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();  // 로그인한 사용자의 이메일을 가져옵니다.
+        String email = null; // 이메일 초기화
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            // 일반 로그인의 경우
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            email = userDetails.getUsername();  // UserDetails에서는 username이 이메일로 설정될 수 있음
+        } else if (authentication.getPrincipal() instanceof OAuth2User) {
+            // 소셜 로그인의 경우
+            OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
+            email = oauthUser.getAttribute("email");  // OAuth2User에서는 getAttribute를 사용하여 이메일 접근
+        }
+
+        if (email == null) {
+            throw new IllegalStateException("사용자 이메일을 가져올 수 없습니다.");
+        }
 
         System.out.println("저장" + postFormDto);
         PostEntity postEntity = new PostEntity();
@@ -103,6 +116,20 @@ public class PostService {
     public Page<PostEntity> searchPosts(String keyword, Pageable pageable) {
         return postRepository.findByKeyword(keyword, pageable);
     }
+
+    public String getCurrentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) return null;
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails)principal).getUsername(); // 일반 로그인
+        } else if (principal instanceof OAuth2User) {
+            return ((OAuth2User)principal).<String>getAttribute("email"); // 소셜 로그인
+        }
+        return null;
+    }
+
 
 
 }
