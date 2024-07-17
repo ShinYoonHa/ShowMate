@@ -15,6 +15,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
@@ -48,7 +49,10 @@ public class PostController {
     }
 
     @GetMapping("/posts/new/showId={showId}")
-    public String newPostFormWithShow(@PathVariable("showId") Long showId, Model model) {
+    public String newPostFormWithShow(@PathVariable("showId") Long showId, Model model, Principal principal) {
+        if (principal == null) {  // 사용자가 로그인하지 않은 경우
+            return "redirect:/login";  // 로그인 페이지로 리다이렉트
+        }
         System.out.println("새로운 글 표시중");
         ShowDto showDto = showService.getShowDetail(showId);
         PostFormDto postFormDto = new PostFormDto();
@@ -62,13 +66,18 @@ public class PostController {
     }
 
     @PostMapping("/posts/new")
-    public String savePost(@ModelAttribute PostFormDto postFormDto) {
-        System.out.println("새로운 글 데이터 받음: " + postFormDto);
-        postService.savePost(postFormDto);
-        System.out.println("저장된 데이타: " + postFormDto);
-        System.out.println("redirecting...");
+    public String savePost(@ModelAttribute PostFormDto postFormDto, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();  // 현재 로그인한 사용자의 이메일을 가져옵니다.
+            postFormDto.setAuthor(email);        // PostFormDto에 작성자 정보로 이메일을 설정합니다.
+            postService.savePost(postFormDto);      // 수정된 PostFormDto로 게시글을 저장합니다.
+        } else {
+            // 로그인하지 않은 경우 처리
+            return "redirect:/login";
+        }
         return "redirect:/posts";
     }
+
 
     @GetMapping("/posts/{id}")
     public String getPostDetail(@PathVariable("id") Long id, Model model) {
@@ -135,11 +144,27 @@ public class PostController {
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/posts/delete/{id}")
-    public @ResponseBody ResponseEntity deletePost(@PathVariable("id") Long id) {
-        System.out.println("id로 글 삭제중: " + id);
-        postService.deletePost(id);
-        System.out.println("글 삭제 성공: " + id);
-        return new ResponseEntity<Long>(id, HttpStatus.OK);
+    @PostMapping("/posts/edit/{id}")
+    public String editPost(@PathVariable("id") Long id, @ModelAttribute PostFormDto postFormDto, Principal principal, RedirectAttributes redirectAttributes) {
+        PostEntity post = postService.getPostById(id);
+        if (principal != null && post.getAuthor().equals(principal.getName())) {
+            postFormDto.setAuthor(principal.getName());
+            postService.updatePost(id, postFormDto);
+            return "redirect:/posts";
+        } else {
+            redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
+            return "redirect:/posts";
+        }
     }
+
+    @DeleteMapping(value = "/posts/delete/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable("id") Long id, Principal principal) {
+        PostEntity post = postService.getPostById(id);
+        if (!post.getAuthor().equals(principal.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
+        }
+        postService.deletePost(id);
+        return ResponseEntity.ok("글 삭제 성공");
+    }
+
 }
