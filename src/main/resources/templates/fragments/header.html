@@ -17,16 +17,16 @@
             <a class="navbar-brand" href="/">ShowMate</a>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a class="nav-link" href="/show">공연</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a class="nav-link" href="/place">공연 시설</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a class="nav-link" href="/award">수상작</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
+                    <li class="nav-item">
                         <a class="nav-link" href="/posts">모임</a>
                     </li>
                 </ul>
@@ -36,6 +36,9 @@
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link" href="/members/logout">로그아웃</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/members/mypage">마이 페이지</a> <!-- 마이 페이지 버튼 추가 -->
                     </li>
                 </ul>
             </div>
