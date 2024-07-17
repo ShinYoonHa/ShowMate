@@ -16,7 +16,7 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = true)
+    @Column(name = "author_email", nullable = true)
     private String author; // 작성자 필드 추가
 
     @Column(nullable = false)
