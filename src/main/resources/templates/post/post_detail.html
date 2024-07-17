@@ -152,9 +152,9 @@
 
         <div class="btn-group">
           <a href="/posts" class="btn btn-primary">목록으로 돌아가기</a>
-          <div th:if="${postFormDto.author == #authentication.name}"><!--#authentication.name 현재 로그인한 사용자의 이름 postFormDto.author는 게시글을 작성한 사용자의 이름-->
-            <a th:href="@{'/posts/edit/' + ${postFormDto.id}}" class="btn btn-warning">수정</a>
-            <button type="button" class="btn btn-danger" onclick="deletePost()">삭제</button>
+          <div th:if="${postFormDto.author == currentUserEmail}">
+            <a th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-warning">수정</a>
+            <button type="button" th:onclick="'deletePost('+${post.id}+');'" class="btn btn-danger">삭제</button>
           </div>
           <button type="button" class="btn btn-success" id="applyButton" onclick="applyPost()">신청하기</button>
         </div>
