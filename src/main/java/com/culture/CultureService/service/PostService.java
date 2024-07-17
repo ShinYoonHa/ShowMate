@@ -8,6 +8,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+
 
     public List<PostEntity> getPosts(){
         System.out.println("모든 글 가져오는 중");
@@ -35,12 +39,16 @@ public class PostService {
     }
 
     public void savePost(PostFormDto postFormDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();  // 로그인한 사용자의 이메일을 가져옵니다.
+
         System.out.println("저장" + postFormDto);
         PostEntity postEntity = new PostEntity();
         postEntity.setTitle(postFormDto.getTitle()); // 제목 필드 설정
         postEntity.setContent(postFormDto.getContent()); // 내용 필드 설정
         postEntity.setPostDate(postFormDto.getPostDate()); // 날짜 필드 설정
-        postEntity.setAuthor(postFormDto.getAuthor()); // 작성자 필드 설정
+        postEntity.setAuthor(email); // 작성자 이메일 설정
         postEntity.setCurrentPeople(postFormDto.getCurrentPeople()); // 현재인원 설정
         postEntity.setMaxPeople(postFormDto.getMaxPeople()); // 정원 설정
 
