@@ -129,6 +129,7 @@
             </div>
 
             <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" th:field="*{author}">
             <input type="hidden" th:field="*{showId}">
             <input type="hidden" th:field="*{showTitle}">
             <input type="hidden" th:field="*{showPeriod}">
@@ -136,55 +137,10 @@
             <input type="hidden" th:field="*{showPosterUrl}">
 
             <div class="text-center mt-4">
-                <button type="button" id="updateButton" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
         </form>
     </div>
 </div>
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
-        function updatePost() {
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-
-            var postId = /*[[${postId}]]*/'';
-            var postData = {
-                title: $('#title').val(),
-                content: $('#content').val(),
-                postDate: $('#postDate').val(),
-                currentPeople: $('#currentPeople').val(),
-                maxPeople: $('#maxPeople').val(),
-                showId: $('input[name="showId"]').val(),
-                showTitle: $('input[name="showTitle"]').val(),
-                showPeriod: $('input[name="showPeriod"]').val(),
-                showGenre: $('input[name="showGenre"]').val(),
-                showPosterUrl: $('input[name="showPosterUrl"]').val()
-            };
-
-            $.ajax({
-                url: '/posts/edit/' + postId,
-                type: 'PATCH',
-                contentType: 'application/json',
-                data: JSON.stringify(postData),
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
-                success: function(result) {
-                    alert('업데이트가 완료되었습니다.');
-                    window.location.href = '/posts';
-                },
-                error: function(xhr, status, error) {
-                    alert('Error updating postEntity: ' + error);
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            $('#updateButton').click(function() {
-                updatePost();
-            });
-        });
-    </script>
-</th:block>
 </body>
 </html>
