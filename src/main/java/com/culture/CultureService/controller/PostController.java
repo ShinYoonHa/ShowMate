@@ -11,6 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,7 +83,7 @@ public class PostController {
 
 
     @GetMapping("/posts/{id}")
-    public String getPostDetail(@PathVariable("id") Long id, Model model) {
+    public String getPostDetail(@PathVariable("id") Long id, Model model, Authentication authentication) {
         PostEntity postEntity = postService.getPostById(id);
         PostFormDto postFormDto = new PostFormDto();
         postFormDto.setId(postEntity.getId());
@@ -105,9 +108,22 @@ public class PostController {
 
         model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("formattedDate", formattedDate); // 변환된 날짜 문자열 추가
+        model.addAttribute("post", postEntity);
+        model.addAttribute("currentUserEmail", getCurrentUserEmail(authentication));
 
 
         return "post/post_detail";
+    }
+    private String getCurrentUserEmail(Authentication authentication) {
+        if (authentication == null) return null;
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername(); // 일반 로그인
+        } else if (principal instanceof OAuth2User) {
+            return ((OAuth2User) principal).<String>getAttribute("email"); // 소셜 로그인
+        }
+        return null;
     }
 
     @GetMapping("/posts/edit/{id}")
@@ -145,26 +161,41 @@ public class PostController {
     }
 
     @PostMapping("/posts/edit/{id}")
-    public String editPost(@PathVariable("id") Long id, @ModelAttribute PostFormDto postFormDto, Principal principal, RedirectAttributes redirectAttributes) {
+    public String editPost(@PathVariable("id") Long id, @ModelAttribute PostFormDto postFormDto, Authentication authentication, RedirectAttributes redirectAttributes) {
+        String currentUserEmail = extractUserEmail(authentication);
         PostEntity post = postService.getPostById(id);
-        if (principal != null && post.getAuthor().equals(principal.getName())) {
-            postFormDto.setAuthor(principal.getName());
-            postService.updatePost(id, postFormDto);
-            return "redirect:/posts";
-        } else {
-            redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
+        if (!post.getAuthor().equals(currentUserEmail)) {
+            redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다");
             return "redirect:/posts";
         }
+        postService.updatePost(id, postFormDto);
+        return "redirect:/posts";
     }
 
-    @DeleteMapping(value = "/posts/delete/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable("id") Long id, Principal principal) {
+    @DeleteMapping("/posts/delete/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable("id") Long id, Authentication authentication) {
+        String currentUserEmail = extractUserEmail(authentication);
         PostEntity post = postService.getPostById(id);
-        if (!post.getAuthor().equals(principal.getName())) {
+        if (!post.getAuthor().equals(currentUserEmail)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
         }
         postService.deletePost(id);
-        return ResponseEntity.ok("글 삭제 성공");
+        return ResponseEntity.ok("삭제성공");
     }
+
+    private String extractUserEmail(Authentication authentication) {
+        if (authentication == null) {
+            return null; // 인증 정보 없음
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails)principal).getUsername(); // 일반 로그인에서는 username이 이메일
+        } else if (principal instanceof OAuth2User) {
+            return (String)((OAuth2User)principal).getAttributes().get("email"); // 소셜 로그인에서는 attributes 맵에서 이메일 추출
+        }
+        return null;
+    }
+
 
 }
