@@ -37,4 +37,21 @@ public class ShowService {
         ShowDto showDto = ShowDto.of(showEntity);
         return showDto;
     }
+
+
+
+    // 공연 ID로 ShowEntity 반환
+    public ShowEntity getShowById(Long id) {
+        return showRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID를 가진 공연이 존재하지 않습니다."));
+    }
+
+    //추가
+    public ShowEntity getShowByShowId(String showId) {
+        ShowEntity showEntity = showRepository.findByShowId(showId);
+        if (showEntity == null) {
+            throw new EntityNotFoundException("해당 ID를 가진 공연이 존재하지 않습니다.");
+        }
+        return showEntity;
+    }
 }
