@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .requestMatchers("/show/**", "/place/**", "/award/**", "/posts/**").permitAll() // 추가된 부분
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/sms/send", "/api/sms/verify").permitAll()
+                .requestMatchers("/posts/new/showId=*").authenticated() //모임생성 페이지 로그인 필요
                 .anyRequest().authenticated()
         ).formLogin(formLogin -> formLogin
                 .loginPage("/members/login")
