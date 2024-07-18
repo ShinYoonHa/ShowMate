@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,8 +36,16 @@ public class PostEntity {
     private String showGenre;
     private String showPosterUrl;
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "member_posts", inverseJoinColumns =  @JoinColumn(name = "member_id"),
+            joinColumns = @JoinColumn(name = "id")
+    )
+    private List<Member> members; // 'Member' 엔티티의 인스턴스 목록 저장, 관계된'Member' 객체 포함
+
     // 현재인원 및 정원 필드 추가
-    private int currentPeople;
+    private int currentPeople = 1; //현재인원
     private int maxPeople;
 
     @PrePersist
@@ -47,3 +55,4 @@ public class PostEntity {
         }
     }
 }
+
