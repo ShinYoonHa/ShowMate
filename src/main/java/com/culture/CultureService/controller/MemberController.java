@@ -62,10 +62,10 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             return "member/memberForm";
         }
-        if (!confirmCheck) {
-            model.addAttribute("errorMessage", "이메일 인증을 하세요.");
-            return "member/memberForm";
-        }
+//        if (!confirmCheck) {
+//            model.addAttribute("errorMessage", "이메일 인증을 하세요.");
+//            return "member/memberForm";
+//        }
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
