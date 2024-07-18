@@ -1,6 +1,7 @@
 package com.culture.CultureService.controller;
 
 import com.culture.CultureService.dto.PostFormDto;
+import com.culture.CultureService.entity.Member;
 import com.culture.CultureService.entity.PostEntity;
 import com.culture.CultureService.service.PostService;
 import com.culture.CultureService.service.ShowService;
@@ -22,6 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,8 +86,9 @@ public class PostController {
 
 
     @GetMapping("/posts/{id}")
-    public String getPostDetail(@PathVariable("id") Long id, Model model, Authentication authentication) {
+    public String getPostDetail(@PathVariable("id") Long id, Model model, Authentication authentication,Principal principal) {
         PostEntity postEntity = postService.getPostById(id);
+
         PostFormDto postFormDto = new PostFormDto();
         postFormDto.setId(postEntity.getId());
         postFormDto.setAuthor(postEntity.getAuthor());
@@ -106,11 +110,26 @@ public class PostController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = postEntity.getRegTime().format(formatter);
 
+        // postEntity에서 관련된 모든 회원정보 ㄱㅏ져옴
+        List<Member> lists = postEntity.getMembers();
+        // 로그인한 사용자가 목록에 있는지 확인하기 위한 변수 초기화
+        int value = 0;
+        // 모든 회원을 현재 로그인한 사용자와 이메일이 일치하는지 확인
+        for(Member m : lists){
+            // principal의 이름(이메일)이 회원의 이메일과 일치할 경우
+            if(principal.getName().equals(m.getEmail())){
+                value = 1; // 사용자가 목록에 있다는 것을 표시
+                break;// 반복문 탈출
+            }
+        }
+
         model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("formattedDate", formattedDate); // 변환된 날짜 문자열 추가
         model.addAttribute("post", postEntity);
         model.addAttribute("currentUserEmail", getCurrentUserEmail(authentication));
-
+        // 'check' 이라는 이름으로 'value' 값 모델에 추가
+        // html 사용자 권한 확인 로직에 사용
+        model.addAttribute("check",value);
 
         return "post/post_detail";
     }
@@ -196,6 +215,51 @@ public class PostController {
         }
         return null;
     }
-
+    // '/posts/apply/{id}' 경로로 POST 요청 오면 메서드 호출
+    // 게시물에 대한 신청 처리
+    @PostMapping("/posts/apply/{id}")
+    @ResponseBody
+    public ResponseEntity<?> applyPost(@PathVariable("id") Long id, Principal principal) {
+        // 사용자 인증 여부 확인
+        if (principal == null) {
+            // principal 객체가 null일 경우, 로그인 필요하다는 응답 보냄
+            return ResponseEntity.ok("login");
+        }
+        // postService를 통해 신청 로직을 처리, 결과 받음
+        String result = postService.applyPost(id, principal.getName());
+        if (result.equals("success")) {
+            // 신청 완료시 해당 게시물의 현재 인원 수 반환
+            PostEntity post = postService.getPostById(id);
+            return ResponseEntity.ok(new HashMap<String, Object>() {{
+                put("currentPeople", post.getCurrentPeople());
+            }});
+        } else {
+            // 신청 실패시 실패 원인을 반환
+            return ResponseEntity.ok(result);
+        }
+    }
+    // '/posts/cancel/{id}' 경로로 POST 요청이 오면 메서드 호출
+    //게시물에 대한 신청 취소 처리
+    @PostMapping("/posts/cancel/{id}")
+    @ResponseBody
+    public ResponseEntity<?> cancelApplyPost(@PathVariable("id") Long id, Principal principal) {
+        // 사용자 인증 여부 확인
+        if (principal == null) {
+            // principal 객체가 null일 경우, 로그인이 필요 응답 보냄
+            return ResponseEntity.ok("login");
+        }
+        // postService를 통해 신청 취소로직 처리하고 결과 받음
+        String result = postService.cancelApplyPost(id, principal.getName());
+        if (result.equals("success")) {
+            // 신청 취소성공시, 해당 게시물의 현재 인원수 반환
+            PostEntity post = postService.getPostById(id);
+            return ResponseEntity.ok(new HashMap<String, Object>() {{
+                put("currentPeople", post.getCurrentPeople());
+            }});
+        } else {
+            // 신청 취소실패시 실패 원인 반환
+            return ResponseEntity.ok(result);
+        }
+    }
 
 }
