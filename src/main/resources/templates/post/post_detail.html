@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 <head>
+  <meta charset="UTF-8">
   <title>게시물 상세보기</title>
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
@@ -12,14 +13,14 @@
   <meta name="_csrf_header" th:content="${_csrf.headerName}">
   <style>
     body {
-        background-color: #f0f8ff; /* 밝은 파란색 배경 */
+        background-color: #f0f8ff;
     }
 
     .detail-container {
         max-width: 1200px;
         margin: 20px auto;
         padding: 20px;
-        background: #fff; /* 흰색 배경 */
+        background: #fff;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
@@ -87,8 +88,8 @@
         padding: 20px;
         background-color: #e9ecef;
         border-radius: 8px;
-        min-height: 150px; /* 최소 높이를 설정하여 필드가 더 크게 보이게 함 */
-        border: 1px solid #ccc; /* 테두리 추가 */
+        min-height: 150px;
+        border: 1px solid #ccc;
     }
 
     .content-background .form-control {
@@ -125,6 +126,7 @@
       <!-- 게시물 상세 내용 -->
       <div class="col-md-8">
         <input type="hidden" id="postId" th:value="${postFormDto.id}">
+        <input type="hidden" id="_csrf" th:value="${_csrf.token}">
 
         <div class="form-group">
           <label for="title">제목</label>
@@ -157,6 +159,7 @@
             <button type="button" th:onclick="'deletePost('+${post.id}+');'" class="btn btn-danger">삭제</button>
           </div>
           <button type="button" class="btn btn-success" id="applyButton" onclick="applyPost()">신청하기</button>
+          <button type="button" class="btn btn-secondary" id="cancelApplyButton" onclick="cancelApplyPost()" style="display: none;">신청 취소</button>
         </div>
 
       </div>
@@ -166,31 +169,100 @@
 
 <th:block layout:fragment="script">
   <script th:inline="javascript">
-    function deletePost(){
-        var token = $("meta[name='_csrf']").attr("content");
-        var header = $("meta[name='_csrf_header']").attr("content");
-        var postId = $('#postId').val();
-        $.ajax({
-            url: '/posts/delete/' + postId,
-            type: 'DELETE',
-            beforeSend : function(xhr){
-                /*데이터 전송하기 전에 헤더에 csrf 값을 설정*/
-                xhr.setRequestHeader(header, token);
-            },
-            success: function(result) {
-                alert('게시물이 성공적으로 삭제되었습니다.');
-                window.location.href = '/posts';
-            },
-            error: function(xhr, status, error) {
-                alert('게시물 삭제 중 오류가 발생했습니다: ' + error);
-            }
-        });
-    }
 
-    function applyPost() {
-        alert('신청하기 버튼이 클릭되었습니다.');
-        // 여기에 신청하기 버튼 클릭 시 실행할 추가 작업을 구현할 수 있습니다.
-    }
+
+    $(document).ready(function() {
+       var check = [[${check}]];
+       console.log(check);
+       if(check == 1){
+          $('#applyButton').hide();
+          $('#cancelApplyButton').show();
+       }
+       else{
+          $('#applyButton').show();
+          $('#cancelApplyButton').hide();
+       }
+
+    });
+
+function deletePost() {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    var postId = $('#postId').val();
+    $.ajax({
+        url: '/posts/delete/' + postId,
+        type: 'DELETE',
+        beforeSend: function(xhr) {
+            /* 데이터 전송하기 전에 헤더에 csrf 값을 설정 */
+            xhr.setRequestHeader(header, token);
+        },
+        success: function(result) {
+            alert('게시물이 성공적으로 삭제되었습니다.');
+            window.location.href = '/posts';
+        },
+        error: function(xhr, status, error) {
+            alert('게시물 삭제 중 오류가 발생했습니다: ' + error);
+        }
+    });
+}
+
+function applyPost() {
+    var postId = $('#postId').val();
+    var token = $('#_csrf').val();
+    $.ajax({
+        url: "/posts/apply/" + postId,
+        type: "POST",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-TOKEN", token);
+        },
+        success: function(response) {
+            if (response === "self") {
+                alert("자신이 작성한 게시물입니다.");
+            } else if (response === "max") {
+                alert("최대 인원을 초과했습니다.");
+            } else if (response === "login") {
+                alert("로그인 후 신청할 수 있습니다.");
+            } else {
+                alert("신청되었습니다.");
+                $('#currentPeople').text(response.currentPeople);
+                $('#applyButton').hide();
+                $('#cancelApplyButton').show();
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('신청 중 오류가 발생했습니다: ' + error);
+        }
+    });
+}
+
+function cancelApplyPost() {
+    var postId = $('#postId').val();
+    var token = $('#_csrf').val();
+    $.ajax({
+        url: "/posts/cancel/" + postId,
+        type: "POST",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRF-TOKEN", token);
+        },
+        success: function(response) {
+            if (response === "self") {
+                alert("자신이 작성한 게시물입니다.");
+            } else if (response === "min") {
+                alert("최소 인원을 미만입니다.");
+            } else if (response === "login") {
+                alert("로그인 후 취소할 수 있습니다.");
+            } else {
+                alert("신청이 취소되었습니다.");
+                $('#currentPeople').text(response.currentPeople);
+                $('#applyButton').show();
+                $('#cancelApplyButton').hide();
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('취소 중 오류가 발생했습니다: ' + error);
+        }
+    });
+}
   </script>
 </th:block>
 </body>
