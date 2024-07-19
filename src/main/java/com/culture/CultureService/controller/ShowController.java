@@ -52,10 +52,27 @@ public class ShowController {
 
     //공연상세페이지
     @GetMapping(value = "/id={id}")
-    public String showDetail(@PathVariable("id") Long id, Model model) {
+    public String showDetail(@PathVariable("id") Long id, Model model, Principal principal, @AuthenticationPrincipal OAuth2User oAuth2User) {
         try {
             ShowDto showDto = showService.getShowDetail(id);
+            boolean isLiked = false;
+
+            if (oAuth2User != null) {  // 소셜 로그인 사용자인 경우
+                String email = oAuth2User.getAttribute("email");
+                User user = userService.findByEmail(email);
+                if (user != null) {
+                    isLiked = likeService.isLiked(user, showDto.getId());
+                }
+            } else if (principal != null) {  // 일반 로그인 사용자인 경우
+                String email = principal.getName();
+                Member member = memberService.findByEmail(email);
+                if (member != null) {
+                    isLiked = likeService.isLiked(member, showDto.getId());
+                }
+            }
+
             model.addAttribute("showDto", showDto);
+            model.addAttribute("isLiked", isLiked);
             return "show/showDetail";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
@@ -65,10 +82,27 @@ public class ShowController {
 
     //공연상세페이지
     @GetMapping(value = "/showId={showId}")
-    public String showDetail(@PathVariable("showId") String showId, Model model) {
+    public String showDetail(@PathVariable("showId") String showId, Model model, Principal principal, @AuthenticationPrincipal OAuth2User oAuth2User) {
         try {
             ShowDto showDto = showService.getShowDetail(showId);
+            boolean isLiked = false;
+
+            if (oAuth2User != null) {  // 소셜 로그인 사용자인 경우
+                String email = oAuth2User.getAttribute("email");
+                User user = userService.findByEmail(email);
+                if (user != null) {
+                    isLiked = likeService.isLiked(user, showDto.getId());
+                }
+            } else if (principal != null) {  // 일반 로그인 사용자인 경우
+                String email = principal.getName();
+                Member member = memberService.findByEmail(email);
+                if (member != null) {
+                    isLiked = likeService.isLiked(member, showDto.getId());
+                }
+            }
+
             model.addAttribute("showDto", showDto);
+            model.addAttribute("isLiked", isLiked);
             return "show/showDetail";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 공연입니다.");
@@ -102,4 +136,3 @@ public class ShowController {
         }
     }
 }
-
