@@ -1,0 +1,165 @@
+
+        .custom-container {
+            margin: 0 auto;
+            padding: 40px;
+            max-width: 1400px; /* 컨테이너의 최대 너비를 늘립니다 */
+            margin-top: 100px; /* 추가: 컨텐츠를 아래로 내리기 위해 여백을 추가 */
+        }
+        .carousel-item img {
+            max-height: 400px; /* 이미지의 최대 높이를 설정합니다 */
+            object-fit: cover; /* 이미지가 컨테이너를 덮도록 설정합니다 */
+        }
+        .custom-card {
+            background: linear-gradient(to bottom right, #ffd1a9, #ffffff);
+            width: 23%;
+            margin: 10px 10px;
+            border: 3px solid #ffc10730; /* 테두리를 좀 더 두껍게 변경 */
+            border-radius: 10px; /* 둥글기를 조금 더 늘림 */
+            overflow: hidden;
+            text-align: center;
+            display: inline-block;
+            background-color: #ffff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 그림자를 더 깊게 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 전환 추가 */
+        }
+        .custom-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .custom-card-body {
+            padding: 20px;
+        }
+        .custom-card-body h6 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .custom-card-body p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .custom-card:hover {
+            transform: translateY(-5px); /* 호버 시 위로 약간 이동 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
+        }
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10; /* z-index 값을 높게 설정하여 앞에 오도록 합니다 */
+        }
+        .carousel-control-prev, .carousel-control-next {
+            width: 40px;
+            height: 40px;
+            background-color: transparent; /* 원형 모양을 없애기 위해 배경을 투명으로 설정 */
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 11; /* 버튼의 z-index 값을 높게 설정합니다 */
+        }
+        .carousel-control-prev {
+            left: 0; /* 왼쪽 버튼 위치 조정 */
+            color: #f8d7da;
+            opacity: 100;
+        }
+        .carousel-control-next {
+            right: 0; /* 오른쪽 버튼 위치 조정 */
+            color: #f8d7da;
+            opacity: 100;
+        }
+        .carousel-container {
+            position: relative;
+            margin-bottom: 75px; /* 추가: 카로셀과 수상 목록 사이에 여백을 추가합니다 */
+            margin-top: 75px;
+        }
+        .carousel-inner {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+        .carousel-item {
+            flex: 0 0 100%;
+            max-width: 100%;
+            transition: transform 1s ease; /* 전환 시간을 늘립니다 */
+        }
+        .carousel-item img {
+            width: 100%;
+            height: auto;
+        }
+        .statistics-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .statistics-container canvas {
+            max-width: 600px;
+            max-height: 400px;
+        }
+        .statistics-table {
+            max-width: 600px;
+            overflow-x: auto;
+        }
+        .statistics-table table {
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .page-link {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+        }
+        .page-link.active {
+            background-color: #f8d7da;
+            color: white;
+            border-color: #f8d7da;
+        }
+        .table {
+            --bs-table-color-type: initial;
+            --bs-table-bg-type: initial;
+            --bs-table-color-state: initial;
+            --bs-table-bg-state: initial;
+            --bs-table-color: #212529;
+            --bs-table-bg: var(--bs-body-bg);
+            --bs-table-border-color: #f8d7da;
+            --bs-table-accent-bg: #f8d7da;
+            --bs-table-striped-color: #000;
+            --bs-table-striped-bg: #fff;
+            --bs-table-active-color: var(--bs-body-color);
+            --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+            --bs-table-hover-color: var(--bs-body-color);
+            --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+            width: 100%;
+            margin-bottom: 1rem;
+            vertical-align: top;
+            border-color: var(--bs-table-border-color);
+        }
+       .award-title-container {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+       }
+       .award-title {
+           font-size: 40px;
+           font-weight: bold;
+           color: #ffd700;
+           text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.8);
+           margin: 0 10px; /* 텍스트 양쪽에 간격을 줍니다 */
+       }
+       .award-title-container img {
+           height: 70px; /* 날개 이미지의 높이를 텍스트와 맞춥니다 */
+
+       }
