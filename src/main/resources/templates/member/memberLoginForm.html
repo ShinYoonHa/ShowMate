@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<!-- 사용자 CSS 추가 -->
-
-<th:block layout:fragment="css">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>로그인 - ShowMate</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background-color: #ffffff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            justify-content: center;
         }
         .login-container {
-            background-color: #ffffff;
+            background-color: #f8f9fa;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -47,7 +53,7 @@
             transition: border-color 0.3s;
         }
         .form-control:focus {
-            border-color: #007bff;
+            border-color: #ff8c00;
         }
         .btn {
             width: 100%;
@@ -59,7 +65,7 @@
             transition: background-color 0.3s;
         }
         .btn-primary {
-            background-color: #007bff;
+            background-color: #0078ff;
             color: white;
         }
         .btn-primary:hover {
@@ -109,8 +115,8 @@
             display: inline-block;
             width: 48%;
             padding: 0.75rem;
-            background-color: #f8f9fa;
-            color: #007bff;
+            background-color: #ffB300;
+            color: white;
             text-decoration: none;
             border-radius: 5px;
             text-align: center;
@@ -118,43 +124,84 @@
             font-weight: 600;
         }
         .additional-links a:hover {
-            background-color: #e2e6ea;
-            color: #0056b3;
+            background-color: #e67e22;
         }
         .error {
             color: #bd2130;
             margin-top: 1rem;
             text-align: center;
         }
+        .navbar-custom {
+            background-color: #ff8c00 !important;
+        }
     </style>
-</th:block>
-
-<div layout:fragment="content">
-    <div class="login-container">
-        <h2>로그인</h2>
-        <form action="/members/login" role="form" method="post">
-            <div class="form-group">
-                <label th:for="email">이메일 주소</label>
-                <input type="email" name="email" class="form-control" placeholder="이메일을 입력해주세요.">
-            </div>
-            <div class="form-group">
-                <label th:for="password">비밀번호</label>
-                <input type="password" name="password" class="form-control" placeholder="비밀번호 입력">
-            </div>
-            <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
-            <button class="btn btn-primary">로그인</button>
-            <button type="button" class="btn btn-secondary" onclick="location.href='/members/new'">회원가입</button>
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-        </form>
-        <div class="additional-links">
-            <a href="/members/find-id">아이디 찾기</a>
-            <a href="/members/reset-password">비밀번호 찾기</a>
-        </div>
-        <div class="social-login">
-            <a href="/oauth2/authorization/google" class="google">구글 아이디로 로그인</a>
-            <a href="/oauth2/authorization/kakao" class="kakao">카카오 아이디로 로그인</a>
-            <a href="/oauth2/authorization/naver" class="naver">네이버 아이디로 로그인</a>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">ShowMate</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/show">공연</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/place">공연 시설</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/award">수상작</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/posts">모임</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" href="/members/login">로그인</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/members/logout">로그아웃</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/members/mypage">마이 페이지</a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
+
+<div class="login-container">
+    <h2>로그인</h2>
+    <form action="/members/login" role="form" method="post">
+        <div class="form-group">
+            <label for="email">이메일 주소</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="이메일을 입력해주세요.">
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호 입력">
+        </div>
+        <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
+        <button class="btn btn-primary" type="submit">로그인</button>
+        <button type="button" class="btn btn-secondary" onclick="location.href='/members/new'">회원가입</button>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    </form>
+    <div class="additional-links">
+        <a href="/members/find-id">아이디 찾기</a>
+        <a href="/members/reset-password">비밀번호 찾기</a>
+    </div>
+    <div class="social-login">
+        <a href="/oauth2/authorization/google" class="google">구글 아이디로 로그인</a>
+        <a href="/oauth2/authorization/kakao" class="kakao">카카오 아이디로 로그인</a>
+        <a href="/oauth2/authorization/naver" class="naver">네이버 아이디로 로그인</a>
+    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

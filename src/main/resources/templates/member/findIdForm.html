@@ -15,17 +15,18 @@
         .form-container {
             background-color: #ffffff;
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             max-width: 400px;
             width: 100%;
             text-align: center;
+            position: relative;
         }
         .form-container h1 {
             margin-bottom: 1.5rem;
             font-weight: 700;
             color: #333;
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
         .form-group {
             margin-bottom: 1.5rem;
@@ -41,35 +42,57 @@
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 10px;
             transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 1rem;
         }
         .form-control:focus {
             border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
         }
         .btn {
             width: 100%;
             padding: 0.75rem;
             border: none;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
             transition: background-color 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            margin-bottom: 1rem;
         }
         .btn-primary {
-            background-color: #007bff;
+           background-color: #ffB300;
             color: white;
         }
         .btn-primary:hover {
-            background-color: #0056b3;
-            box-shadow: 0 0 10px rgba(0, 86, 179, 0.5);
+            background-color: #e67e22;
+            box-shadow: 0 0 10px rgba(33, 136, 56, 0.5);
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .back-button i {
+            font-size: 36px;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+        .back-button i:hover {
+            color: #0056b3;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 </head>
 <body>
 <div class="form-container">
+    <button class="back-button" onclick="history.back()">
+        <i class="fas fa-arrow-circle-left"></i>
+    </button>
     <h1>ID 찾기</h1>
     <form th:action="@{/members/find-id}" method="post">
         <div class="form-group">
