@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout1}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout1}">
 <head>
     <meta charset="UTF-8" />
     <title>공연상세보기</title>
@@ -419,7 +420,7 @@
             </div>
         </div>
         <div class="funcButton funcButton-container-top">
-            <a th:if="${showDto.state != '공연완료'}" th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success">모임 생성</a>
+            <a th:if="${showDto.state != '공연완료'}" th:href="@{'/posts/new/showId=' + ${showDto.id}}"  sec:authorize="isAuthenticated()" class="btn btn-success">모임 생성</a>
             <a href="/show" class="btn btn-info">목록으로</a>
         </div>
         <div class="buttons-container">
@@ -473,7 +474,6 @@
         <div class="funcButton funcButton-container-bottom">
             <a href="/show" class="btn btn-info">목록으로</a>
             <a id="topButton" class="btn btn-secondary">맨 위로</a>
-            <a th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success mt-3">모임 생성</a>
         </div>
     </div>
 </div>
