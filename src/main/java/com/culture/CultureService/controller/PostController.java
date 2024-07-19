@@ -3,9 +3,11 @@ package com.culture.CultureService.controller;
 import com.culture.CultureService.dto.PostFormDto;
 import com.culture.CultureService.entity.Member;
 import com.culture.CultureService.entity.PostEntity;
+import com.culture.CultureService.service.MemberService;
 import com.culture.CultureService.service.PostService;
 import com.culture.CultureService.service.ShowService;
 import com.culture.CultureService.dto.ShowDto;
+import com.culture.CultureService.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -102,7 +104,7 @@ public class PostController {
         postFormDto.setShowGenre(postEntity.getShowGenre());
         postFormDto.setShowPosterUrl(postEntity.getShowPosterUrl());
 
-        // 추가된 부분
+        // 현재인원과 최대 인원 정보 dto에 추가
         postFormDto.setCurrentPeople(postEntity.getCurrentPeople());
         postFormDto.setMaxPeople(postEntity.getMaxPeople());
 
@@ -116,10 +118,13 @@ public class PostController {
         int value = 0;
         // 모든 회원을 현재 로그인한 사용자와 이메일이 일치하는지 확인
         for(Member m : lists){
-            // principal의 이름(이메일)이 회원의 이메일과 일치할 경우
-            if(principal.getName().equals(m.getEmail())){
-                value = 1; // 사용자가 목록에 있다는 것을 표시
-                break;// 반복문 탈출
+            //principal이 null이 아닐경우
+            if(principal != null) {
+                // principal의 이름(이메일)이 회원의 이메일과 일치할 경우
+                if (principal.getName().equals(m.getEmail())) {
+                    value = 1; // 사용자가 목록에 있다는 것을 표시
+                    break;// 반복문 탈출
+                }
             }
         }
 
