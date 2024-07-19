@@ -5,6 +5,7 @@
     <title>메인 페이지</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -79,7 +80,7 @@
 
             updateAwards();
 
-            // Pagination for table
+            // 테이블의 페이지네이션
             var rowsPerPage = 6;
             var rows = $('.statistics-table tbody tr');
             var totalRows = rows.length;
@@ -115,153 +116,6 @@
     </script>
 </th:block>
 
-<th:block layout:fragment="css">
-    <style>
-        .custom-container {
-            margin: 0 auto;
-            padding: 20px;
-            max-width: 1400px; /* 컨테이너의 최대 너비를 늘립니다 */
-            margin-top: 100px; /* 추가: 컨텐츠를 아래로 내리기 위해 여백을 추가 */
-        }
-        .carousel-item img {
-            max-height: 400px; /* 이미지의 최대 높이를 설정합니다 */
-            object-fit: cover; /* 이미지가 컨테이너를 덮도록 설정합니다 */
-        }
-        .custom-card {
-            width: 23%; /* 네 개씩 나오도록 너비 조정 */
-            margin: 10px 10px; /* 여백 추가 */
-            border: 2px solid gold; /* 테두리를 금색으로 설정 */
-            border-radius: 8px;
-            overflow: hidden;
-            text-align: center;
-            display: inline-block;
-            background-color: #fffbe6; /* 카드 배경색을 연한 금색으로 설정 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 */
-        }
-        .custom-card img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        .custom-card-body {
-            padding: 20px;
-        }
-        .custom-card-body h6 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .custom-card-body p {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        .carousel-controls {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            z-index: 10; /* z-index 값을 높게 설정하여 앞에 오도록 합니다 */
-        }
-        .carousel-control-prev, .carousel-control-next {
-            width: 40px;
-            height: 40px;
-            background-color: transparent; /* 원형 모양을 없애기 위해 배경을 투명으로 설정 */
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 11; /* 버튼의 z-index 값을 높게 설정합니다 */
-        }
-        .carousel-control-prev {
-            left: 0; /* 왼쪽 버튼 위치 조정 */
-            color: #f8d7da;
-            opacity: 100;
-        }
-        .carousel-control-next {
-            right: 0; /* 오른쪽 버튼 위치 조정 */
-            color: #f8d7da;
-            opacity: 100;
-        }
-        .carousel-container {
-            position: relative;
-            margin-bottom: 75px; /* 추가: 카로셀과 수상 목록 사이에 여백을 추가합니다 */
-            margin-top: 75px;
-        }
-        .carousel-inner {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow: hidden;
-            position: relative;
-        }
-        .carousel-item {
-            flex: 0 0 100%;
-            max-width: 100%;
-            transition: transform 1s ease; /* 전환 시간을 늘립니다 */
-        }
-        .carousel-item img {
-            width: 100%;
-            height: auto;
-        }
-        .statistics-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-top: 20px;
-        }
-        .statistics-container canvas {
-            max-width: 600px;
-            max-height: 400px;
-        }
-        .statistics-table {
-            max-width: 600px;
-            overflow-x: auto;
-        }
-        .statistics-table table {
-            width: 100%;
-            font-size: 0.9rem;
-        }
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .page-link {
-            margin: 0 5px;
-            padding: 5px 10px;
-            border: 1px solid #dee2e6;
-            cursor: pointer;
-        }
-        .page-link.active {
-            background-color: #f8d7da;
-            color: white;
-            border-color: #f8d7da;
-        }
-        .table {
-            --bs-table-color-type: initial;
-            --bs-table-bg-type: initial;
-            --bs-table-color-state: initial;
-            --bs-table-bg-state: initial;
-            --bs-table-color: #212529;
-            --bs-table-bg: var(--bs-body-bg);
-            --bs-table-border-color: #f8d7da;
-            --bs-table-accent-bg: #f8d7da;
-            --bs-table-striped-color: #000;
-            --bs-table-striped-bg: #fff;
-            --bs-table-active-color: var(--bs-body-color);
-            --bs-table-active-bg: rgba(0, 0, 0, 0.1);
-            --bs-table-hover-color: var(--bs-body-color);
-            --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
-            width: 100%;
-            margin-bottom: 1rem;
-            vertical-align: top;
-            border-color: var(--bs-table-border-color);
-        }
-    </style>
-</th:block>
-
 <div layout:fragment="content">
     <div class="custom-container text-center">
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="4000">
@@ -290,7 +144,11 @@
         </div>
 
         <div class="carousel-container">
-            <h5>수상작</h5>
+            <div class="award-title-container">
+                <img src="img/수상작 왼쪽.jpeg" alt="left wing">
+                <h5 class="award-title">수상작</h5>
+                <img src="img/수상작 오른쪽.jpeg" alt="right wing">
+            </div>
             <div class="carousel-controls">
                 <button id="prevBtn" class="carousel-control-prev">
                     <i class="fas fa-chevron-left"></i>
@@ -305,13 +163,13 @@
 
             <div class="carousel-inner">
                 <th:block th:each="award : ${topAwards}">
-                        <div class="custom-card award-item">
-                            <img th:src="${award.posterUrl}" th:alt="${award.title}" />
-                            <div class="custom-card-body">
-                                <h6 th:text="${award.title}">제목</h6>
-                                <p th:text="${award.stDate} + ' ~ ' + ${award.edDate}">기간</p>
-                            </div>
+                    <div class="custom-card award-item">
+                        <img th:src="${award.posterUrl}" th:alt="${award.title}" />
+                        <div class="custom-card-body">
+                            <h6 th:text="${award.title}">제목</h6>
+                            <p th:text="${award.stDate} + ' ~ ' + ${award.edDate}">기간</p>
                         </div>
+                    </div>
                     </a>
                 </th:block>
             </div>
