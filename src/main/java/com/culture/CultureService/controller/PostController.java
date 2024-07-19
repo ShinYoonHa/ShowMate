@@ -36,26 +36,26 @@ public class PostController {
 
     @ModelAttribute
     public void addCsrfToken(Model model, CsrfToken token) {
-        model.addAttribute("_csrf", token);
+        model.addAttribute("_csrf", token); //CSRF 토큰 모델에추가
     }
-
+    // 게시글 목록 페이징해 보여주는 메소그. 검색기능
     @GetMapping("/posts")
     public String listPosts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
                             @RequestParam(required = false) String keyword) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PostEntity> postPage;
         if (keyword != null && !keyword.isEmpty()) {
-            postPage = postService.searchPosts(keyword, pageable);
+            postPage = postService.searchPosts(keyword, pageable); // 키워드로 게시글 검색
         } else {
-            postPage = postService.getPostsByRegTimeDesc(pageable);
+            postPage = postService.getPostsByRegTimeDesc(pageable); // 게시글을 등록 시간 내림차순으로 가져옴
         }
         model.addAttribute("posts", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("keyword", keyword);
-        return "post/post_list";
+        return "post/post_list"; // 게시글 목록 페이지로 이동
     }
-
+    // 새 게시글 작성 폼 반환. 특정 공연(showId)와 연결, 공연 정보 미리 폼에 넣어둠
     @GetMapping("/posts/new/showId={showId}")
     public String newPostFormWithShow(@PathVariable("showId") Long showId, Model model, Principal principal) {
         if (principal == null) {  // 사용자가 로그인하지 않은 경우
@@ -68,25 +68,25 @@ public class PostController {
         postFormDto.setShowTitle(showDto.getTitle());
         postFormDto.setShowPeriod(showDto.getStDate() + " ~ " + showDto.getEdDate());
         postFormDto.setShowGenre(showDto.getGenre());
-        postFormDto.setShowPosterUrl(showDto.getPosterUrl()); // 추가된 부분
+        postFormDto.setShowPosterUrl(showDto.getPosterUrl());
         model.addAttribute("postFormDto", postFormDto);
-        return "post/post_form";
+        return "post/post_form"; // 글 작성 폼 페이지로 이동
     }
-
+    // POST 요청 통해 전송된 폼 데이터 기반으로 새 게시글 저장
     @PostMapping("/posts/new")
     public String savePost(@ModelAttribute PostFormDto postFormDto, Principal principal) {
         if (principal != null) {
-            String email = principal.getName();  // 현재 로그인한 사용자의 이메일을 가져옵니다.
-            postFormDto.setAuthor(email);        // PostFormDto에 작성자 정보로 이메일을 설정합니다.
-            postService.savePost(postFormDto);      // 수정된 PostFormDto로 게시글을 저장합니다.
+            String email = principal.getName();  // 현재 로그인한 사용자의 이메일을 가져옴
+            postFormDto.setAuthor(email);        // PostFormDto에 작성자 정보로 이메일을 설정
+            postService.savePost(postFormDto);      // 수정된 PostFormDto로 게시글을 저장
         } else {
             // 로그인하지 않은 경우 처리
             return "redirect:/login";
         }
-        return "redirect:/posts";
+        return "redirect:/posts"; // 저장 후 게시글 목록 페이지로 리다이렉트
     }
 
-
+    // 특정 ID를 가진 게시글의 상세 페이지 보여줌. 게시글의 모든 정보 포함한 DTO를 모델에 추가
     @GetMapping("/posts/{id}")
     public String getPostDetail(@PathVariable("id") Long id, Model model, Authentication authentication,Principal principal) {
         PostEntity postEntity = postService.getPostById(id);
@@ -139,7 +139,7 @@ public class PostController {
         return "post/post_detail";
     }
     private String getCurrentUserEmail(Authentication authentication) {
-        if (authentication == null) return null;
+        if (authentication == null) return null; //인증정보 없으면 null 반환
 
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
@@ -149,7 +149,7 @@ public class PostController {
         }
         return null;
     }
-
+    // 특정 게시글 편집할 수 있는 폼 페이지로 이동. 기존의 게시글 정보를 폼에 넣어둠
     @GetMapping("/posts/edit/{id}")
     public String editPostForm(@PathVariable("id") Long id,Model model) {
         System.out.println("id로 편집할 글 가져오는중: " + id);
@@ -167,15 +167,15 @@ public class PostController {
         postFormDto.setShowGenre(postEntity.getShowGenre());
         postFormDto.setShowPosterUrl(postEntity.getShowPosterUrl());
 
-        // 추가된 부분
+        // 현재 인원과 최대 인원 정보 추가
         postFormDto.setCurrentPeople(postEntity.getCurrentPeople());
         postFormDto.setMaxPeople(postEntity.getMaxPeople());
 
         model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("postId", id);
-        return "post/post_edit_form";
+        return "post/post_edit_form"; // 글 편집 폼 페이지 이동
     }
-
+    // PATCH 요청을 통해 특정 게시글 업데이트. 성공 시 HTTP 상태코드 200 반환
     @PatchMapping(value = "/posts/edit/{id}")
     public @ResponseBody ResponseEntity updatePost(@PathVariable("id") Long id, @RequestBody PostFormDto postFormDto) {
         System.out.println("id로 글 업데이트중: " + id);
@@ -183,7 +183,7 @@ public class PostController {
         System.out.println("글 업데이트 성공: " + id);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
-
+    // POST 요청을 통해 특정 게시글 편집, 결과에 따라 사용자 리다이렉트. 수정 권한이 없는 경우 에러 메시지와 함께 목록으로 리다이렉트
     @PostMapping("/posts/edit/{id}")
     public String editPost(@PathVariable("id") Long id, @ModelAttribute PostFormDto postFormDto, Authentication authentication, RedirectAttributes redirectAttributes) {
         String currentUserEmail = extractUserEmail(authentication);
@@ -195,7 +195,7 @@ public class PostController {
         postService.updatePost(id, postFormDto);
         return "redirect:/posts";
     }
-
+    // DELETE 요청을 통해 특정 게시글 삭제. 사용자가 게시글 작성자가 아니면 HTTP 상태코드 403과 함께 에러 메시지 반환
     @DeleteMapping("/posts/delete/{id}")
     public ResponseEntity<String> deletePost(@PathVariable("id") Long id, Authentication authentication) {
         String currentUserEmail = extractUserEmail(authentication);
@@ -206,7 +206,7 @@ public class PostController {
         postService.deletePost(id);
         return ResponseEntity.ok("삭제성공");
     }
-
+    // 사용자의 이메일 추출하는 내부 메서드. 로그인 정보가 없는 경우 null 반환
     private String extractUserEmail(Authentication authentication) {
         if (authentication == null) {
             return null; // 인증 정보 없음
