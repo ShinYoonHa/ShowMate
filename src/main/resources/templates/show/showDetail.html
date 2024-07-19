@@ -9,17 +9,88 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <link rel="stylesheet" th:href="@{/css/showDetail.css}" />
+    <style>
+        .comment-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .comment-form {
+            margin-bottom: 20px;
+        }
+        .comment-form textarea {
+            resize: none;
+            border-radius: 5px;
+        }
+        .comment-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .comment-form button:hover {
+            background-color: #0056b3;
+        }
+        .comment-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .comment-content {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .comment-date {
+            font-size: 0.9em;
+            color: #888;
+            margin-left: 5px;
+        }
+        .comment-text {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .deleteCommentButton {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .deleteCommentButton:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
+<body>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function () {
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
-            var isLiked = false; // 좋아요 상태를 저장할 변수
-            var cnt=0; //댓글 추가시 댓글번호용 count
+            var isLiked = /*[[${isLiked}]]*/ false;  // 서버에서 받은 좋아요 상태
+            var cnt = 0; //댓글 추가시 댓글번호용 count
+
+            // 현재 로그인한 사용자의 이메일
+            var loggedInEmail = /*[[${#authentication?.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User) ? #authentication?.principal?.attributes['email'] : #authentication?.principal?.username}]]*/ '';
 
             showIntroduction(); //초기에 소개 버튼 누르고 시작
-            //updateLikeButton(); // 초기 좋아요 상태에 따라 버튼 초기화
+            updateLikeButton(); // 초기 좋아요 상태에 따라 버튼 초기화
 
             // 소개 버튼 클릭 시
             $("#introButton").click(function () {
@@ -35,57 +106,167 @@
                 showVenueInfo();
             });
 
-            // 좋아요 버튼 누를 시 단순 색 변경. ajax 완성 시 삭제
+            //좋아요 버튼 클릭 시
             $("#likeButton").click(function () {
-                if ($("#likeButton").text() == "♡") {
+                var showLikeId = $("#showId").val(); // 좋아요를 누른 게시물 ID (예시)
+                isLiked = !isLiked; // 좋아요 상태를 toggle
+
+                var actionUrl = "/show/showId=" + showLikeId + "/" + isLiked;
+
+                $.ajax({
+                    type: "POST",
+                    url: actionUrl,
+                    //showDto에 담긴 showId를 가져옴
+                    data: { showId: showLikeId },
+                    beforeSend: function (xhr) {
+                        /*데이터 전송하기 전에 헤더에 csrf 값을 설정*/
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // 서버에서 좋아요 처리 성공
+                            updateLikeButton();
+                            if (isLiked) {
+                                alert("좋아요를 눌렀습니다.");
+                            } else {
+                                alert("좋아요를 취소했습니다.");
+                            }
+                        } else {
+                            // 좋아요 처리 실패 또는 오류 발생 시 처리
+                            alert("좋아요 처리에 실패했습니다.");
+                            isLiked = !isLiked; // 상태를 이전으로 되돌림
+                            updateLikeButton(); // 버튼 상태 업데이트
+                        }
+                    },
+                    error: function () {
+                        // Ajax 요청 실패 시 처리
+                        alert("서버 요청 중 오류가 발생했습니다.");
+                        isLiked = !isLiked; // 상태를 이전으로 되돌림
+                        updateLikeButton(); // 버튼 상태 업데이트
+                    },
+                });
+            });
+
+            // 좋아요 버튼 텍스트 업데이트 함수
+            function updateLikeButton() {
+                if (isLiked) {
                     $("#likeButton").text("♥");
-                    //알림창 뜨는 것과 관계없이 바로 텍스트 변경
-                    setTimeout(function () {
-                        alert("좋아요를 눌렀습니다.");
-                    }, 0);
                 } else {
                     $("#likeButton").text("♡");
-                    //알림창 뜨는 것과 관계없이 바로 텍스트 변경
-                    setTimeout(function () {
-                        alert("좋아요를 취소합니다.");
-                    }, 0);
                 }
-            });
+            }
 
             // 댓글 추가 버튼 클릭 시
             $("#addCommentButton").click(function () {
                 var newComment = $("#newComment").val();
+                var userEmail = loggedInEmail; // 현재 로그인한 사용자의 이메일 사용
 
                 if (newComment) {
-                    // 현재 시간 가져오기
-                    var currentTime = new Date().toLocaleString();
-                    // 작성자 이름 (예시)
-                    var author = "작성자명"; // 실제로는 서버에서 가져온 값을 사용하거나 사용자 입력을 받도록 수정
+                    $.ajax({
+                        type: "POST",
+                        url: "/comments/add",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            content: newComment,
+                            userEmail: userEmail
+                        }),
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                var comment = response.comment;
+                                var author = comment.authorName;
+                                var date = comment.date;
 
-                    // 새로운 댓글 HTML 생성
-                    var commentHtml = `
-                        <div class='comment-${++cnt}'>
-                            <p><strong>${author}</strong> <span>${currentTime}</span></p>
-                            <p>${newComment}</p>
-                        </div>
-                    `;
-                    // 댓글 리스트에 추가
-                    $("#commentList").append(commentHtml);
-                    // 입력 필드 초기화
-                    $("#newComment").val("");
+                                // 새로운 댓글 HTML 생성
+                                var commentHtml = `
+                                    <div class='comment-item comment-${comment.id}'>
+                                        <div class="comment-content">
+                                            <p class="comment-author">${author} <span class="comment-date">${date}</span></p>
+                                            <p class="comment-text">${newComment}</p>
+                                            <button class="btn btn-danger deleteCommentButton" data-comment-id="${comment.id}">삭제</button>
+                                        </div>
+                                    </div>
+                                `;
+                                // 댓글 리스트의 맨 앞에 추가
+                                $("#commentList").prepend(commentHtml);
+                                // 입력 필드 초기화
+                                $("#newComment").val("");
+                            } else {
+                                alert("댓글 추가에 실패했습니다.");
+                            }
+                        },
+                        error: function () {
+                            alert("서버 요청 중 오류가 발생했습니다.");
+                        }
+                    });
                 }
             });
+
+            // 댓글 삭제 버튼 클릭 시
+            $(document).on("click", ".deleteCommentButton", function () {
+                var commentId = $(this).data("comment-id");
+                if (confirm("댓글을 삭제하시겠습니까?")) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/comments/delete/" + commentId,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert("댓글이 삭제되었습니다.");
+                                $(".comment-" + commentId).remove();
+                            } else {
+                                alert("댓글 삭제에 실패했습니다.");
+                            }
+                        },
+                        error: function () {
+                            alert("서버 요청 중 오류가 발생했습니다.");
+                        }
+                    });
+                }
+            });
+
+            // 함수: 댓글 목록 로드
+            function loadComments() {
+                $.ajax({
+                    type: "GET",
+                    url: "/comments/list",
+                    success: function (response) {
+                        var commentList = $("#commentList");
+                        commentList.empty();
+
+                        response.reverse().forEach(function (comment) {
+                            var commentHtml = `
+                                <div class='comment-item comment-${comment.id}'>
+                                    <div class="comment-content">
+                                        <p class="comment-author">${comment.authorName} <span class="comment-date">${comment.date}</span></p>
+                                        <p class="comment-text">${comment.content}</p>
+                                        ${comment.authorEmail === loggedInEmail ? `<button class='btn btn-danger deleteCommentButton' data-comment-id='${comment.id}'>삭제</button>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                            commentList.append(commentHtml);
+                        });
+                    },
+                    error: function () {
+                        alert("댓글 목록을 불러오는 중 오류가 발생했습니다.");
+                    }
+                });
+            }
 
             // 함수: 소개 영역 표시
             function showIntroduction() {
                 $("#introSection").show();
                 $("#commentSection").hide();
                 $("#venueInfoSection").hide();
-                $("#commentSection").hide();
                 $("#introButton").addClass("btn-primary").removeClass("btn-secondary");
                 $("#commentButton").addClass("btn-secondary").removeClass("btn-primary");
                 $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
             }
+
             // 함수: 댓글 목록 표시
             function showCommentList() {
                 $("#introSection").hide();
@@ -94,7 +275,9 @@
                 $("#introButton").addClass("btn-secondary").removeClass("btn-primary");
                 $("#commentButton").addClass("btn-primary").removeClass("btn-secondary");
                 $("#venueButton").addClass("btn-secondary").removeClass("btn-primary");
+                loadComments(); // 댓글 목록 로드
             }
+
             // 함수: 공연장 정보 표시
             function showVenueInfo() {
                 $("#introSection").hide();
@@ -119,7 +302,7 @@
                     options = { //지도를 생성할 때 필요한 기본 옵션
                         center: new kakao.maps.LatLng(latitude, longitude),
                         level: 3 //지도의 레벨(확대, 축소 정도)
-                };
+                    };
 
                 map = new kakao.maps.Map(container, options); // 지도 생성 및 객체 리턴
                 markerPosition = new kakao.maps.LatLng(latitude, longitude); // 마커 위치 설정
@@ -133,19 +316,19 @@
 
                 var infowindow = new kakao.maps.InfoWindow({ // 인포윈도우를 생성
                     map: map,
-                    position : iwPosition,
-                    content : iwContent
+                    position: iwPosition,
+                    content: iwContent
                 });
 
                 infowindow.open(map, marker);
             })();
 
-            $("#topButton").on("click",function(){
+            $("#topButton").on("click", function () {
                 $('html, body').animate({
-                    scrollTop : 0
-                },400)
-                    return false;
-                });
+                    scrollTop: 0
+                }, 400);
+                return false;
+            });
         });
     </script>
 </th:block>
@@ -164,7 +347,7 @@
             <div class="show-image">
                 <img th:src="${showDto.posterUrl}" class="img-fluid" alt="공연포스터" />
                 <div class="tag-container">
-                    <span class="genre " th:text="${showDto.genre}">장르</span>
+                    <span class="genre" th:text="${showDto.genre}">장르</span>
                     <span class="state" th:text="${showDto.state}">공연상태</span>
                 </div>
             </div>
@@ -279,18 +462,20 @@
                     </tr>
                     </tbody>
                 </table>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
             </div>
             <div th:if="${showDto.placeDto == null}">
                 <p>해당정보없음</p>
-            </div>
-            <div class="map-container">
-                <div id="map"></div>
             </div>
         </div>
         <div class="funcButton funcButton-container-bottom">
             <a href="/show" class="btn btn-info">목록으로</a>
             <a id="topButton" class="btn btn-secondary">맨 위로</a>
+            <a th:href="@{'/posts/new/showId=' + ${showDto.id}}" class="btn btn-success mt-3">모임 생성</a>
         </div>
     </div>
 </div>
+</body>
 </html>
