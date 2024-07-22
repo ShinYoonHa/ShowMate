@@ -54,9 +54,8 @@ public class SmsController {
     public SingleMessageSentResponse sendNotice(@RequestBody Map<String, String> request) {
         String postTitle = request.get("postTitle");
         String postDate = request.get("postDate");
-        Long postId = Long.parseLong(request.get("postId"));
 
-        SingleMessageSentResponse response = smsService.sendNotice(postTitle, postDate, postId);
+        SingleMessageSentResponse response = smsService.sendNotice(postTitle, postDate);
 
         return response;
     }
