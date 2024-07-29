@@ -45,13 +45,7 @@
             border-radius: 8px;
         }
 
-        .show-details p {
-            margin-bottom: 10px;
-        }
 
-        .show-details p span {
-            font-weight: bold;
-        }
 
         .card {
             flex: 0 0 300px; /* 카드의 너비를 300px로 설정 */
@@ -66,6 +60,8 @@
 
         .card-body .form-group {
             text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
 
         .btn-group {
@@ -118,19 +114,15 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <div>공연 제목:</div>
-                        <span th:text="${postFormDto.showTitle}"></span>
+                        <span>공연 제목:</span> <span th:text="${postFormDto.showTitle}"></span>
                     </div>
                     <div class="form-group">
-                        <div>공연 기간:</div>
-                        <span th:text="${postFormDto.showPeriod}"></span>
+                        <span>공연 기간:</span><span th:text="${postFormDto.showPeriod}"></span>
                     </div>
                     <div class="form-group">
-                        <div>공연 장르:</div>
-                        <span th:text="${postFormDto.showGenre}"></span>
+                        <div>공연 장르:<span th:text="${postFormDto.showGenre}"></span></div>
                     </div>
                     <div class="form-group show-image">
-                        <div>포스터 이미지:</div>
                         <img th:src="${postFormDto.showPosterUrl}" alt="포스터 이미지">
                     </div>
                 </div>
