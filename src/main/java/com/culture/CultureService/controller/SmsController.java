@@ -2,6 +2,7 @@ package com.culture.CultureService.controller;
 
 
 import com.culture.CultureService.service.SmsService;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,4 +47,18 @@ public class SmsController {
 
         return response;
     }
+
+
+    //알림 메시지 발송
+    @PostMapping("/send/notice")
+    public SingleMessageSentResponse sendNotice(@RequestBody Map<String, String> request) {
+        String postTitle = request.get("postTitle");
+        String postDate = request.get("postDate");
+
+        SingleMessageSentResponse response = smsService.sendNotice(postTitle, postDate);
+
+        return response;
+    }
+
+
 }
