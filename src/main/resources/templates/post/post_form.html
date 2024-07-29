@@ -7,74 +7,111 @@
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
+        <style>
+        body {
+            background-color: #f0f8ff;
+        }
+
+        .detail-container {
+            max-width: 1000px;
+            margin: 20px auto;
             padding: 20px;
-            background: #f9f9f9;
+            background: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .form-group img {
+        .detail-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .form-group p {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .show-image img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
         }
 
-        .form-group div {
+        .show-details p {
+            margin-bottom: 10px;
+        }
+
+        .show-details p span {
             font-weight: bold;
-            margin-top: 10px;
         }
 
         .card {
-            margin-top: 20px;
+            flex: 0 0 300px; /* 카드의 너비를 300px로 설정 */
+            margin-right: 20px; /* 카드와 폼 사이의 간격 설정 */
         }
 
         .card-header {
             font-weight: bold;
             background-color: #f7f7f7;
+            font-size: 1.2em;
         }
 
         .card-body .form-group {
             text-align: center;
         }
 
-        .card-body .form-group div,
-        .card-body .form-group span {
-            display: block;
+        .btn-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-group a, .btn-group button {
+            margin-left: 10px;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+        }
+
+        .content-background {
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            min-height: 150px;
+            border: 1px solid #ccc;
+        }
+
+        .content-background .form-control {
+            border: none;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        .main-content {
+            display: flex; /* Flexbox 사용 */
+            flex-wrap: wrap; /* Flex 아이템이 넘칠 경우 줄 바꿈 허용 */
+        }
+
+        .form-section {
+            flex: 1 1 auto; /* 폼 섹션의 너비를 설정 */
         }
     </style>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div layout:fragment="content">
-    <h1 class="text-center my-4">모임 생성</h1>
-    <div class="form-container">
-        <form th:action="@{/posts/new}" th:object="${postFormDto}" method="post">
-
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
-            </div>
-            <div class="form-group">
-                <label for="postDate">날짜 및 시간</label>
-                <input type="datetime-local" th:field="*{postDate}" class="form-control" id="postDate" required>
-            </div>
-            <div class="form-group">
-                <label for="currentPeople">현재인원</label>
-                <input type="number" th:field="*{currentPeople}" class="form-control" id="currentPeople" placeholder="현재인원을 입력하세요" required>
-            </div>
-            <div class="form-group">
-                <label for="maxPeople">정원</label>
-                <input type="number" th:field="*{maxPeople}" class="form-control" id="maxPeople" placeholder="정원을 입력하세요" required>
-            </div>
-            <div class="form-group">
-                <label for="content">내용</label>
-                <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" rows="5" required></textarea>
-            </div>
-
-            <!-- 공연 정보 카드 추가 -->
+    <div class="detail-container">
+        <h1>모임 생성</h1>
+        <div class="main-content">
+            <!-- 공연 정보 카드 -->
             <div class="card">
                 <div class="card-header">
                     공연 정보
@@ -92,24 +129,50 @@
                         <div>공연 장르:</div>
                         <span th:text="${postFormDto.showGenre}"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group show-image">
                         <div>포스터 이미지:</div>
-                        <img th:src="${postFormDto.showPosterUrl}" class="img-fluid" alt="포스터 이미지">
+                        <img th:src="${postFormDto.showPosterUrl}" alt="포스터 이미지">
                     </div>
                 </div>
             </div>
 
-            <!-- 숨겨진 필드 추가 -->
-            <input type="hidden" th:field="*{showId}">
-            <input type="hidden" th:field="*{showTitle}">
-            <input type="hidden" th:field="*{showPeriod}">
-            <input type="hidden" th:field="*{showGenre}">
-            <input type="hidden" th:field="*{showPosterUrl}">
+            <!-- 폼 섹션 -->
+            <div class="form-section">
+                <form th:action="@{/posts/new}" th:object="${postFormDto}" method="post">
+                    <div class="form-group">
+                        <label for="title">제목</label>
+                        <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="Enter title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postDate">날짜 및 시간</label>
+                        <input type="datetime-local" th:field="*{postDate}" class="form-control" id="postDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentPeople">현재인원</label>
+                        <input type="number" th:field="*{currentPeople}" class="form-control" id="currentPeople" placeholder="현재인원을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxPeople">정원</label>
+                        <input type="number" th:field="*{maxPeople}" class="form-control" id="maxPeople" placeholder="정원을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">내용</label>
+                        <textarea th:field="*{content}" class="form-control" id="content" placeholder="Enter content" rows="5" required></textarea>
+                    </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary mt-3">작성하기</button>
+                    <!-- 숨겨진 필드 추가 -->
+                    <input type="hidden" th:field="*{showId}">
+                    <input type="hidden" th:field="*{showTitle}">
+                    <input type="hidden" th:field="*{showPeriod}">
+                    <input type="hidden" th:field="*{showGenre}">
+                    <input type="hidden" th:field="*{showPosterUrl}">
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">작성하기</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 </body>
