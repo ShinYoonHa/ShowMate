@@ -51,6 +51,7 @@
       <th>공연 제목</th>
       <th>내용</th>
       <th>등록 날짜</th>
+      <th>조회수</th>
     </tr>
     </thead>
     <tbody>
@@ -61,6 +62,7 @@
       <td th:text="${postEntity.showTitle}"></td>
       <td th:text="${postEntity.content}"></td>
       <td th:text="${#temporals.format(postEntity.regTime, 'yyyy-MM-dd')}"></td> <!-- 시간 제거 후 날짜만 표시 -->
+      <td th:text="${postEntity.viewCount}"></td>
     </tr>
     </tbody>
   </table>
