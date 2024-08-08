@@ -82,6 +82,7 @@ public class PostService {
     public PostEntity getPostById(Long id){
         Optional<PostEntity> post = postRepository.findById(id);
         if(post.isPresent()){
+            postRepository.incrementViewCount(id); //조회수 증가
             return post.get();
         } else {
             throw new IllegalArgumentException("잘못된 글입니다: " + id);

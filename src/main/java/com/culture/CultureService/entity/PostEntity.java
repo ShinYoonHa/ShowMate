@@ -47,6 +47,9 @@ public class PostEntity {
     // 현재인원 및 정원 필드 추가
     private int currentPeople = 1; //현재인원
     private int maxPeople;
+    // viewCount 필드 추가
+    @Column(name = "view_count", nullable = false)
+    private int viewCount = 0; // 조회수 필드 추가
 
     @PrePersist
     public void prePersist(){
